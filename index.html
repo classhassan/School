@@ -13,16 +13,30 @@
 
 <!-- ================= LOGIN ================= -->
 <div id="loginView">
-  <div class="login-card">
-    <h1>🚌 School Bus Tracker</h1>
-    <p>ड्राइवर, पेरेंट्स और स्कूल मैनेजर के लिए लाइव बस ट्रैकिंग</p>
-    <div class="terms-row">
-      <input type="checkbox" id="agree">
-      <label for="agree">मैंने <a id="openTerms">नियम व शर्तें (Terms &amp; Conditions)</a> पढ़ ली हैं और मैं उनसे सहमत हूँ।</label>
+  <aside class="brand">
+    <div class="logo">🚌</div>
+    <h1>बच्चों का सफ़र,<br>अब हर पल आपकी नज़र में</h1>
+    <p>स्कूल बस की लाइव ट्रैकिंग, एक सुरक्षित और भरोसेमंद सिस्टम।</p>
+    <ul>
+      <li>बस की रियल-टाइम लोकेशन</li>
+      <li>स्कूल से दूरी और पहुँचने का अनुमान</li>
+      <li>बच्चे के बस में बैठने पर ही ट्रैकिंग चालू</li>
+      <li>फीस का साफ़ हिसाब, एक ही जगह</li>
+    </ul>
+  </aside>
+  <section class="signin">
+    <div class="login-card">
+      <h2>लॉगिन करें</h2>
+      <p>ड्राइवर, पेरेंट और स्कूल स्टाफ़ अपने Google अकाउंट से जारी रखें।</p>
+      <div class="terms-row">
+        <input type="checkbox" id="agree">
+        <label for="agree">मैं <a id="openTerms">नियम व शर्तें</a> पढ़कर उनसे सहमत हूँ।</label>
+      </div>
+      <button id="googleBtn" disabled><span class="g">G</span> Google से जारी रखें</button>
+      <div id="loginMsg"></div>
+      <div class="secure">🔒 आपकी लोकेशन और जानकारी सिर्फ़ स्कूल के अधिकृत लोगों को दिखती है।</div>
     </div>
-    <button id="googleBtn" class="btn-main" disabled>Google से लॉगिन करें</button>
-    <div id="loginMsg"></div>
-  </div>
+  </section>
 </div>
 
 <!-- ================= NO ACCESS ================= -->
@@ -38,7 +52,7 @@
   <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>ड्राइवर पैनल<small id="drvWho"></small></h1></header>
   <div class="drawer-bg"></div>
   <nav class="drawer"><h2>ड्राइवर पैनल</h2><button data-p="dMap">🗺 मैप और शेयरिंग</button><button data-p="dKids">👨‍🎓 बच्चों की लिस्ट</button><button class="logoutBtn out">Logout</button></nav>
-  <main class="main"><section id="dMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="drvDot"></span><span id="drvStatus">लोकेशन शेयरिंग बंद है</span></div><div class="meta" id="drvMeta">Bus: <b id="drvBus">-</b></div></div><button id="drvBtn" class="btn-main">Start Sharing Location</button></div><div id="drvMap" class="map"></div></section>
+  <main class="main"><section id="dMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="drvDot"></span><span id="drvStatus">लोकेशन शेयरिंग बंद है</span></div><div class="meta" id="drvMeta">Bus: <b id="drvBus">-</b></div></div><button id="drvBtn" class="btn-main">Start Sharing Location</button></div><div id="drvEmpty" class="empty"><div class="ic">📍</div><b>लोकेशन शेयरिंग बंद है</b><span>"Start Sharing Location" दबाते ही मैप खुल जाएगा।</span></div><div id="drvMap" class="map hidden"></div></section>
 <section id="dKids" class="page pad"><h2>बच्चे</h2><div id="drvKids"></div></section>
 </main>
 </div>
@@ -46,7 +60,7 @@
   <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>पेरेंट पैनल<small id="parWho"></small></h1></header>
   <div class="drawer-bg"></div>
   <nav class="drawer"><h2>पेरेंट पैनल</h2><button data-p="pMap">🗺 बस का मैप</button><button data-p="pKids">👨‍🎓 मेरे बच्चे और फीस</button><button data-p="pAdd">➕ बच्चा जोड़ें</button><button class="logoutBtn out">Logout</button></nav>
-  <main class="main"><section id="pMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="parDot"></span><span id="parStatus">…</span></div><div class="meta" id="parMeta"></div></div><label class="meta" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="parFollow" checked style="width:auto"> फॉलो करें</label></div><div id="parMap" class="map"></div></section>
+  <main class="main"><section id="pMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="parDot"></span><span id="parStatus">…</span></div><div class="meta" id="parMeta"></div></div><label class="meta" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="parFollow" checked style="width:auto"> फॉलो करें</label></div><div id="parEmpty" class="empty"><div class="ic">🚌</div><b>बच्चा अभी बस में नहीं है</b><span>ड्राइवर के बच्चे को बिठाते ही बस का मैप यहाँ अपने आप खुल जाएगा।</span></div><div id="parMap" class="map hidden"></div></section>
 <section id="pKids" class="page pad"><h2>मेरे बच्चे, रूट और फीस</h2><div id="parKids"></div></section>
 <section id="pAdd" class="page pad"><h2>बच्चे को बस में जोड़ें</h2><p class="meta">रिक्वेस्ट स्कूल एडमिन अप्रूव करेगा, उसके बाद बच्चा एक्टिव होगा।</p>
 <div class="form-grid"><input id="kName" placeholder="बच्चे का नाम"><input id="kCls" placeholder="क्लास"><input id="kBus" placeholder="Bus ID (स्कूल से पूछें, जैसे BUS1)"><input id="kStop" placeholder="पिकअप जगह / रूट का स्टॉप"><button id="kAdd" class="btn-main">रिक्वेस्ट भेजें</button><div id="kMsg" class="meta"></div></div></section>
@@ -55,14 +69,17 @@
 <div id="managerView" class="panel hidden">
   <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>स्कूल डैशबोर्ड<small id="mgrWho"></small></h1></header>
   <div class="drawer-bg"></div>
-  <nav class="drawer"><h2>स्कूल डैशबोर्ड</h2><button data-p="mMap">🗺 लाइव मैप</button><button data-p="mReq">✅ नई रिक्वेस्ट</button><button data-p="mStu">👨‍🎓 बच्चे और रूट</button><button data-p="mFee">💰 फीस और बजट</button><button data-p="mBus">🚌 बसें और ड्राइवर</button><button class="logoutBtn out">Logout</button></nav>
-  <main class="main"><section id="mMap" class="page mapwrap active"><div id="mgrMap" class="map"></div></section>
+  <nav class="drawer"><h2>🚌 स्कूल डैशबोर्ड</h2><button data-p="mHome">📊 डैशबोर्ड</button><button data-p="mMap">🗺 लाइव मैप</button><button data-p="mReq">✅ नई रिक्वेस्ट</button><button data-p="mStu">👨‍🎓 बच्चे और रूट</button><button data-p="mFee">💰 फीस और बजट</button><button data-p="mBus">🚌 ड्राइवर</button><button data-p="mSet">🏫 स्कूल लोकेशन</button><button class="logoutBtn out">Logout</button></nav>
+  <main class="main"><section id="mHome" class="page pad active"><h2>आज का हाल</h2><div class="stats"><div class="stat"><span id="stLive">0</span><small>लाइव बसें</small></div><div class="stat"><span id="stReq">0</span><small>नई रिक्वेस्ट</small></div><div class="stat"><span id="stKids">0</span><small>अप्रूव्ड बच्चे</small></div><div class="stat warn"><span id="stDue">₹0</span><small>फीस बाकी</small></div></div><h2>सभी बसें</h2><div id="busList"></div></section>
+<section id="mMap" class="page mapwrap"><div id="mgrEmpty" class="empty"><div class="ic">🗺</div><b>अभी कोई बस लोकेशन शेयर नहीं कर रही</b><span>किसी ड्राइवर के शेयरिंग शुरू करते ही मैप अपने आप खुल जाएगा।</span></div><div id="mgrMap" class="map hidden"></div></section>
 <section id="mReq" class="page pad"><h2>नए बच्चों की रिक्वेस्ट</h2><div id="pendList"></div></section>
 <section id="mStu" class="page pad"><h2>अप्रूव्ड बच्चे, बस और पिकअप</h2><div id="stuList"></div></section>
 <section id="mFee" class="page pad"><h2>कुल हिसाब</h2><div id="feeSum" class="bar"></div><h2>फीस सेट करें</h2>
 <div class="form-grid"><select id="fKid"></select><input id="fMonth" type="month"><input id="fDue" type="number" placeholder="इस महीने की फीस ₹"><input id="fPaid" type="number" placeholder="अब तक जमा ₹"><button id="fSave" class="btn-main">Save Fee</button><div id="fMsg" class="meta"></div></div><div id="fList"></div></section>
-<section id="mBus" class="page pad"><h2>सभी बसें (लाइव)</h2><div id="busList"></div><h2>ड्राइवर जोड़ें</h2>
+<section id="mBus" class="page pad"><h2>ड्राइवर जोड़ें</h2>
 <div class="form-grid"><input id="uName" placeholder="ड्राइवर का नाम"><input id="uEmail" type="email" placeholder="Gmail ID"><select id="uRole"><option value="driver">Driver</option></select><input id="uBus" placeholder="Bus ID (जैसे BUS1)"><button id="uAdd" class="btn-main">Save Driver</button><div id="uMsg" class="meta"></div></div><h2>सभी ड्राइवर</h2><div id="userList"></div></section>
+<section id="mSet" class="page pad"><h2>स्कूल की लोकेशन</h2><p class="meta">बस की दूरी इसी जगह से नापी जाएगी।</p>
+<div class="form-grid"><input id="sName" placeholder="स्कूल का नाम"><input id="sLat" type="number" step="any" placeholder="Latitude (जैसे 26.8467)"><input id="sLng" type="number" step="any" placeholder="Longitude (जैसे 80.9462)"><button id="sGps" class="btn-ghost">📍 मेरी मौजूदा लोकेशन लें (स्कूल में खड़े होकर)</button><button id="sSave" class="btn-main">Save School Location</button><div id="sMsg" class="meta"></div></div></section>
 </main>
 </div>
 
@@ -162,6 +179,36 @@ document.querySelectorAll(".panel").forEach(v => {
   });
 });
 
+let school = null, schoolWatching = false; const schoolCbs = [];
+function watchSchool(cb){
+  schoolCbs.push(cb); if (school) cb();
+  if (schoolWatching) return; schoolWatching = true;
+  onValue(ref(db, "settings/school"), x => { school = x.val(); schoolCbs.forEach(f => f()); }, () => {});
+}
+function distKm(lat, lng){
+  if (!school) return null;
+  const t = x => x * Math.PI / 180, a = Math.sin(t(school.lat - lat) / 2) ** 2 + Math.cos(t(lat)) * Math.cos(t(school.lat)) * Math.sin(t(school.lng - lng) / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(a));
+}
+function distText(b){
+  const d = distKm(b.lat, b.lng); if (d == null) return "";
+  let t = "स्कूल से " + (d < 1 ? Math.round(d * 1000) + " मीटर" : d.toFixed(1) + " km") + " दूर (सीधी दूरी)";
+  if (b.speed > 5) t += " · लगभग " + Math.max(1, Math.round(d / b.speed * 60)) + " मिनट";
+  return t;
+}
+function schoolLayer(map){
+  let m = null;
+  return () => {
+    if (!school) return; const p = [school.lat, school.lng];
+    if (!m) m = L.marker(p, { icon: L.divIcon({ className: "", iconSize: [60, 44], iconAnchor: [30, 22], html: `<div class="busicon school">🏫</div><div class="buslabel">${esc(school.name || "School")}</div>` }) }).addTo(map);
+    else m.setLatLng(p);
+  };
+}
+function showMap(map, mapId, emptyId, on){
+  $(mapId).classList.toggle("hidden", !on); $(emptyId).classList.toggle("hidden", on);
+  if (on) map.invalidateSize();
+}
+
 /* ============ 3) MAP HELPERS ============ */
 function makeMap(el){
   const map = L.map(el).setView([26.8467, 80.9462], 13);          // default: Lucknow
@@ -194,6 +241,7 @@ function startDriver(user, role){
   let marker = null, timer = null, wakeLock = null, sharing = false;
 
   const busRef = ref(db, "buses/" + busId);
+  watchSchool(schoolLayer(map));
 
   function setUI(on, text){
     $("drvDot").className = "dot " + (on ? "on" : "");
@@ -211,6 +259,7 @@ function startDriver(user, role){
   function sendLocation(){
     navigator.geolocation.getCurrentPosition(async pos => {
       const { latitude: lat, longitude: lng, speed, heading, accuracy } = pos.coords;
+      showMap(map, "drvMap", "drvEmpty", true);
       drawMe(lat, lng);
       try {
         await set(busRef, {
@@ -223,7 +272,7 @@ function startDriver(user, role){
           updatedAt: Date.now()
         });
         setUI(true, "लोकेशन शेयर हो रही है ✔");
-        $("drvMeta").innerHTML = `Bus: <b>${esc(busId)}</b> · अंतिम अपडेट: ${new Date().toLocaleTimeString()} · सटीकता ±${Math.round(accuracy)} मी.`;
+        $("drvMeta").innerHTML = `Bus: <b>${esc(busId)}</b> · अंतिम अपडेट: ${new Date().toLocaleTimeString()} · सटीकता ±${Math.round(accuracy)} मी.` + (school ? "<br>" + distText({ lat, lng, speed: Math.round((speed || 0) * 3.6) }) : "");
       } catch (e) { setUI(true, "Firebase में सेव नहीं हुआ: " + e.code); }
     }, err => {
       setUI(sharing, "GPS Error: " + err.message + " (लोकेशन की अनुमति दें)");
@@ -243,6 +292,7 @@ function startDriver(user, role){
     try { await wakeLock?.release(); } catch (e) {}
     try { await update(busRef, { sharing: false, updatedAt: Date.now() }); } catch (e) {}
     setUI(false, "लोकेशन शेयरिंग बंद है");
+    showMap(map, "drvMap", "drvEmpty", false);
   }
 
   let kids = {}, on = {};
@@ -278,6 +328,7 @@ function startParent(user, prof){
   const map = makeMap("parMap");
   const markers = {}, unsubs = {}, watched = {}, last = {};
   let kids = {}, first = true;
+  const sl = schoolLayer(map); watchSchool(() => { sl(); info(); });
   const stat = { pending: "⏳ अप्रूवल बाकी", approved: "✔ अप्रूव्ड", rejected: "✖ रिजेक्ट" };
 
   function info(){
@@ -286,7 +337,7 @@ function startParent(user, prof){
     const live = isLive(v);
     $("parDot").className = "dot " + (live ? "on" : "off");
     $("parStatus").textContent = live ? "बच्चा बस में है — बस लाइव चल रही है" : "बच्चा बस में है, पर बस का सिग्नल नहीं आ रहा";
-    $("parMeta").textContent = `अंतिम अपडेट: ${ago(v.updatedAt)} · गति: ${v.speed ?? 0} km/h`;
+    $("parMeta").textContent = `अंतिम अपडेट: ${ago(v.updatedAt)} · गति: ${v.speed ?? 0} km/h` + (distText(v) ? " · " + distText(v) : "");
   }
 
   function watchBuses(){
@@ -294,13 +345,14 @@ function startParent(user, prof){
       if (watched[bus]) return; watched[bus] = true;
       onValue(ref(db, `onboard/${bus}/${me}`), s => {
         if (unsubs[bus]) { unsubs[bus](); delete unsubs[bus]; }
-        if (!s.exists()) {                              // बच्चा बस में नहीं → लोकेशन छुपाएँ
+        if (!s.exists()) {
+          delete last[bus]; if (!Object.keys(last).length) showMap(map, "parMap", "parEmpty", false);                              // बच्चा बस में नहीं → लोकेशन छुपाएँ
           if (markers[bus]) { map.removeLayer(markers[bus]); delete markers[bus]; }
           delete last[bus]; first = true; info(); return;
         }
         unsubs[bus] = onValue(ref(db, "buses/" + bus), bs => {
           const v = bs.val(); if (!v || v.lat == null) return;
-          last[bus] = v; const pos = [v.lat, v.lng];
+          last[bus] = v; const pos = [v.lat, v.lng]; showMap(map, "parMap", "parEmpty", true);
           if (!markers[bus]) markers[bus] = L.marker(pos, { icon: busIcon(bus) }).addTo(map); else markers[bus].setLatLng(pos);
           if (first) { map.setView(pos, 16); first = false; } else if ($("parFollow").checked) map.panTo(pos);
           info();
@@ -351,34 +403,46 @@ function startManager(user){
   let buses = {}, fitted = false;
 
   function renderBuses(){
-    const ids = Object.keys(buses);
+    const ids = Object.keys(buses); let live = 0;
     $("busList").innerHTML = ids.length ? "" : '<div class="meta">अभी कोई बस डेटा नहीं है।</div>';
     ids.sort().forEach(id => {
-      const b = buses[id], live = isLive(b);
-      const div = document.createElement("div");
-      div.className = "busitem";
-      div.innerHTML = `<b>${esc(id)} <span><span class="dot ${live ? "on" : "off"}"></span> ${live ? "Live" : "Offline"}</span></b>
-        <div class="meta">${esc(b.driver || "-")} · ${b.speed ?? 0} km/h · ${ago(b.updatedAt)}</div>`;
-      div.onclick = () => b.lat != null && map.setView([b.lat, b.lng], 16);
+      const b = buses[id], on = isLive(b); if (on) live++;
+      const div = document.createElement("div"); div.className = "busitem";
+      div.innerHTML = `<b>${esc(id)} <span>${on ? "🟢 Live" : "⚪ Offline"}</span></b><div class="meta">${esc(b.driver || "-")} · ${b.speed ?? 0} km/h · ${ago(b.updatedAt)}${on && distText(b) ? "<br>" + distText(b) : ""}</div>`;
+      div.onclick = () => { if (on) { document.querySelector('#managerView [data-p="mMap"]').click(); showMap(map, "mgrMap", "mgrEmpty", true); map.setView([b.lat, b.lng], 16); } };
       $("busList").appendChild(div);
     });
+    $("stLive").textContent = live;
+    showMap(map, "mgrMap", "mgrEmpty", live > 0);
   }
-
   onValue(ref(db, "buses"), snap => {
     buses = snap.val() || {};
     Object.keys(buses).forEach(id => {
       const b = buses[id]; if (b.lat == null) return;
-      if (!markers[id]) markers[id] = L.marker([b.lat, b.lng], { icon: busIcon(id) }).addTo(map);
-      else markers[id].setLatLng([b.lat, b.lng]);
+      if (!markers[id]) markers[id] = L.marker([b.lat, b.lng], { icon: busIcon(id) }).addTo(map); else markers[id].setLatLng([b.lat, b.lng]);
       markers[id].setOpacity(isLive(b) ? 1 : 0.45);
     });
-    if (!fitted && Object.keys(markers).length) {
-      map.fitBounds(L.featureGroup(Object.values(markers)).getBounds().pad(0.3), { maxZoom: 16 });
-      fitted = true;
-    }
     renderBuses();
+    const lm = Object.keys(markers).filter(id => isLive(buses[id])).map(id => markers[id]);
+    if (!fitted && lm.length) { map.fitBounds(L.featureGroup(lm).getBounds().pad(0.3), { maxZoom: 16 }); fitted = true; }
   });
   setInterval(renderBuses, 5000);
+
+  // ---- स्कूल की लोकेशन ----
+  const sl = schoolLayer(map);
+  watchSchool(() => {
+    sl();
+    if (school) { $("sName").value ||= school.name || ""; $("sLat").value ||= school.lat; $("sLng").value ||= school.lng; }
+    renderBuses();
+  });
+  $("sGps").onclick = () => navigator.geolocation.getCurrentPosition(p => { $("sLat").value = p.coords.latitude.toFixed(6); $("sLng").value = p.coords.longitude.toFixed(6); },
+    e => $("sMsg").textContent = "GPS Error: " + e.message, { enableHighAccuracy: true });
+  $("sSave").onclick = async () => {
+    const lat = parseFloat($("sLat").value), lng = parseFloat($("sLng").value);
+    if (isNaN(lat) || isNaN(lng)) { $("sMsg").textContent = "Latitude और Longitude भरें।"; return; }
+    try { await set(ref(db, "settings/school"), { name: $("sName").value.trim() || "School", lat, lng }); $("sMsg").textContent = "सेव हो गया ✔"; }
+    catch (e) { $("sMsg").textContent = "Error: " + e.code; }
+  };
 
   // ---- बच्चों के अप्रूवल + फीस ----
   let kids = {};
@@ -409,6 +473,8 @@ function startManager(user){
     let due = 0, paid = 0;
     ap.forEach(k => Object.values(k.fees || {}).forEach(f => { due += f.due || 0; paid += f.paid || 0; }));
     $("feeSum").innerHTML = `<span>कुल फीस: <b>₹${due}</b></span><span>जमा: <b style="color:#12a150">₹${paid}</b></span><span>बाकी: <b style="color:#d92d20">₹${due - paid}</b></span>`;
+    $("stReq").textContent = Object.values(kids).filter(k => k.status === "pending").length;
+    $("stKids").textContent = ap.length; $("stDue").textContent = "₹" + (due - paid);
     $("stuList").innerHTML = ap.map(k => {
       const r = Object.values(k.fees || {}).reduce((a, f) => a + (f.due || 0) - (f.paid || 0), 0);
       return `<div class="busitem" style="cursor:default"><b>${esc(k.name)} <span>बाकी ₹${r}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · पिकअप: ${esc(k.stop)}<br>Parent: ${esc(k.parentName)} ${esc(k.parentEmail)}</div></div>`;

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>School Bus Live Tracking</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root{--ink:#1c2333;--muted:#667085;--line:#dde1e8;--bg:#f2f4f7;--card:#fff;--yellow:#f5b800;--green:#12a150;--red:#d92d20}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",sans-serif;background:var(--bg);color:var(--ink)}
+  .hidden{display:none!important}
+  button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:12px 18px;font-weight:600}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-main:disabled{opacity:.45;cursor:not-allowed}
+  .btn-stop{background:var(--red);color:#fff}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  input,select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;width:100%}
+  header.top{background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;gap:10px}
+  header.top h1{font-size:1.05rem;margin:0}
+  header.top small{color:#c5cbd8;display:block;font-weight:400}
+  header.top button{padding:8px 14px;background:#2c3550;color:#fff}
+
+  /* login */
+  #loginView{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(180deg,var(--yellow) 0 38%,var(--bg) 38%)}
+  .login-card{background:var(--card);border-radius:16px;padding:28px 24px;max-width:420px;width:100%;box-shadow:0 8px 30px rgba(0,0,0,.12)}
+  .login-card h1{margin:0 0 4px;font-size:1.5rem}
+  .login-card p{color:var(--muted);margin:0 0 20px}
+  .terms-row{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;margin:16px 0}
+  .terms-row input{width:auto;margin-top:3px}
+  .terms-row a{color:#0b5bd3;cursor:pointer;text-decoration:underline}
+  #googleBtn{width:100%}
+  #loginMsg{color:var(--red);font-size:.9rem;min-height:1.2em;margin-top:10px}
+
+  /* panels */
+  .panel{display:flex;flex-direction:column;height:100vh}
+  .panel .body{flex:1;display:flex;flex-direction:column;min-height:0}
+  .map{flex:1;min-height:300px}
+  .bar{background:var(--card);padding:14px 16px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+  .status{display:flex;align-items:center;gap:8px;font-weight:600}
+  .dot{width:11px;height:11px;border-radius:50%;background:#98a2b3;display:inline-block}
+  .dot.on{background:var(--green);box-shadow:0 0 0 4px rgba(18,161,80,.2)}
+  .dot.off{background:var(--red)}
+  .meta{color:var(--muted);font-size:.9rem}
+  .mgr{flex:1;display:grid;grid-template-columns:340px 1fr;min-height:0}
+  .side{background:var(--card);border-right:1px solid var(--line);overflow:auto;padding:14px}
+  .side h3{margin:14px 0 8px;font-size:1rem}
+  .busitem{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+  .busitem:hover{border-color:var(--yellow)}
+  .busitem b{display:flex;justify-content:space-between}
+  .form-grid{display:grid;gap:8px}
+  .useritem{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.86rem;border-bottom:1px solid var(--line);padding:8px 0}
+  .useritem button{padding:4px 10px;background:#fee4e2;color:var(--red);font-size:.8rem}
+  .busicon{font-size:26px;text-align:center;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+  .buslabel{background:var(--ink);color:#fff;font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px;white-space:nowrap;margin-top:2px}
+  @media(max-width:800px){.mgr{grid-template-columns:1fr;grid-template-rows:auto 60vh}.side{max-height:45vh;border-right:0;border-bottom:1px solid var(--line)}}
+
+  /* modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(15,20,35,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:5000}
+  .modal{background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:88vh;display:flex;flex-direction:column}
+  .modal h2{margin:0;padding:18px 20px;border-bottom:1px solid var(--line);font-size:1.15rem}
+  .modal .content{padding:6px 20px;overflow:auto;font-size:.93rem;line-height:1.6}
+  .modal .content li{margin-bottom:6px}
+  .modal .foot{padding:14px 20px;border-top:1px solid var(--line);text-align:right}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="loginView">
+  <div class="login-card">
+    <h1>🚌 School Bus Tracker</h1>
+    <p>ड्राइवर, पेरेंट्स और स्कूल मैनेजर के लिए लाइव बस ट्रैकिंग</p>
+    <div class="terms-row">
+      <input type="checkbox" id="agree">
+      <label for="agree">मैंने <a id="openTerms">नियम व शर्तें (Terms &amp; Conditions)</a> पढ़ ली हैं और मैं उनसे सहमत हूँ।</label>
+    </div>
+    <button id="googleBtn" class="btn-main" disabled>Google से लॉगिन करें</button>
+    <div id="loginMsg"></div>
+  </div>
+</div>
+
+<!-- ================= NO ACCESS ================= -->
+<div id="noAccessView" class="hidden" style="padding:40px 20px;text-align:center">
+  <h2>आपको अभी एक्सेस नहीं मिला है</h2>
+  <p id="noAccessEmail" class="meta"></p>
+  <p>कृपया स्कूल मैनेजर से कहें कि वो इस ईमेल को Driver या Parent के रूप में जोड़ दें।</p>
+  <button class="btn-ghost" onclick="document.getElementById('logout0').click()">Logout</button>
+  <button id="logout0" class="hidden"></button>
+</div>
+
+<!-- ================= DRIVER ================= -->
+<div id="driverView" class="panel hidden">
+  <header class="top">
+    <h1>ड्राइवर पैनल <small id="drvWho"></small></h1>
+    <button class="logoutBtn">Logout</button>
+  </header>
+  <div class="body">
+    <div class="bar">
+      <div>
+        <div class="status"><span class="dot" id="drvDot"></span><span id="drvStatus">लोकेशन शेयरिंग बंद है</span></div>
+        <div class="meta" id="drvMeta">Bus: <b id="drvBus">-</b></div>
+      </div>
+      <button id="drvBtn" class="btn-main">Start Sharing Location</button>
+    </div>
+    <div id="drvKids" class="side" style="max-height:35vh;border:0;border-bottom:1px solid var(--line)"></div>
+    <div id="drvMap" class="map"></div>
+  </div>
+</div>
+
+<!-- ================= PARENT ================= -->
+<div id="parentView" class="panel hidden">
+  <header class="top">
+    <h1>पेरेंट्स पैनल <small id="parWho"></small></h1>
+    <button class="logoutBtn">Logout</button>
+  </header>
+  <div class="body">
+    <div class="bar">
+      <div>
+        <div class="status"><span class="dot" id="parDot"></span><span id="parStatus">बस की जानकारी लोड हो रही है…</span></div>
+        <div class="meta" id="parMeta"></div>
+      </div>
+      <label class="meta" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="parFollow" checked style="width:auto"> बस को फॉलो करें</label>
+    </div>
+    <div class="side" style="max-height:42vh;border:0;border-bottom:1px solid var(--line)">
+      <h3 style="margin-top:0">मेरे बच्चे और फीस</h3><div id="parKids"></div>
+      <h3>बच्चे को बस में जोड़ें (एडमिन अप्रूवल के बाद एक्टिव)</h3>
+      <div class="form-grid">
+        <input id="kName" placeholder="बच्चे का नाम"><input id="kCls" placeholder="क्लास">
+        <input id="kBus" placeholder="Bus ID (स्कूल से पूछें, जैसे BUS1)"><input id="kStop" placeholder="पिकअप जगह / स्टॉप">
+        <button id="kAdd" class="btn-main">रिक्वेस्ट भेजें</button><div id="kMsg" class="meta"></div>
+      </div>
+    </div>
+    <div id="parMap" class="map"></div>
+  </div>
+</div>
+
+<!-- ================= MANAGER ================= -->
+<div id="managerView" class="panel hidden">
+  <header class="top">
+    <h1>स्कूल मैनेजर डैशबोर्ड <small id="mgrWho"></small></h1>
+    <button class="logoutBtn">Logout</button>
+  </header>
+  <div class="mgr">
+    <div class="side">
+      <h3 style="margin-top:0">सभी बसें (लाइव)</h3>
+      <div id="busList"><div class="meta">अभी कोई बस डेटा नहीं है।</div></div>
+
+      <h3>नए बच्चों की रिक्वेस्ट (Approval)</h3><div id="pendList"></div>
+      <h3>फीस सेट करें</h3>
+      <div class="form-grid">
+        <select id="fKid"></select><input id="fMonth" type="month">
+        <input id="fDue" type="number" placeholder="इस महीने की फीस ₹"><input id="fPaid" type="number" placeholder="अब तक जमा ₹">
+        <button id="fSave" class="btn-main">Save Fee</button><div id="fMsg" class="meta"></div>
+      </div>
+      <div id="fList"></div>
+      <h3>ड्राइवर जोड़ें</h3>
+      <div class="form-grid">
+        <input id="uName" placeholder="नाम">
+        <input id="uEmail" type="email" placeholder="Gmail ID (जैसे abc@gmail.com)">
+        <select id="uRole"><option value="driver">Driver</option></select>
+        <input id="uBus" placeholder="Bus ID (जैसे BUS1)">
+        <button id="uAdd" class="btn-main">Save User</button>
+        <div id="uMsg" class="meta"></div>
+      </div>
+
+      <h3>सभी यूज़र्स</h3>
+      <div id="userList"></div>
+    </div>
+    <div id="mgrMap" class="map"></div>
+  </div>
+</div>
+
+<!-- ================= TERMS MODAL ================= -->
+<div id="termsModal" class="modal-bg hidden">
+  <div class="modal">
+    <h2>नियम व शर्तें — बच्चों की सुरक्षा और GPS ट्रैकिंग</h2>
+    <div class="content">
+      <ol>
+        <li><b>उद्देश्य:</b> यह सिस्टम केवल स्कूल बस की लाइव लोकेशन दिखाकर बच्चों की सुरक्षा और समय पर आवागमन सुनिश्चित करने के लिए है।</li>
+        <li><b>ड्राइवर की सहमति:</b> ड्राइवर की GPS लोकेशन तभी शेयर होती है जब वह खुद "Start Sharing Location" दबाता है। केवल स्कूल ड्यूटी के समय ही शेयरिंग चालू रखें; ड्यूटी खत्म होने पर बंद करें।</li>
+        <li><b>कौन क्या देख सकता है:</b> पेरेंट्स सिर्फ अपने बच्चे की बस की लोकेशन देख सकते हैं। स्कूल मैनेजर सभी बसें देख सकता है। किसी तीसरे व्यक्ति को एक्सेस नहीं मिलेगा।</li>
+        <li><b>डेटा का उपयोग:</b> लोकेशन डेटा का उपयोग केवल बस ट्रैकिंग के लिए होगा। इसे बेचा या विज्ञापन के लिए इस्तेमाल नहीं किया जाएगा। केवल बस की ताज़ा लोकेशन रखी जाती है, पुरानी हिस्ट्री सेव नहीं होती।</li>
+        <li><b>लॉगिन सुरक्षा:</b> अपना Google अकाउंट किसी के साथ शेयर न करें। लॉगिन केवल स्कूल द्वारा जोड़े गए ईमेल से ही संभव है।</li>
+        <li><b>गलत उपयोग पर रोक:</b> बस की लोकेशन के स्क्रीनशॉट या जानकारी सोशल मीडिया या किसी बाहरी व्यक्ति के साथ साझा करना मना है। उल्लंघन पर एक्सेस बंद किया जा सकता है।</li>
+        <li><b>ड्राइविंग के समय:</b> ड्राइवर गाड़ी चलाते समय फोन का उपयोग न करें। फोन को होल्डर में रखें और बटन गाड़ी रोककर ही दबाएँ।</li>
+        <li><b>सटीकता:</b> GPS लोकेशन नेटवर्क और मौसम के कारण कुछ देरी या अंतर के साथ दिख सकती है। इसे केवल अनुमानित जानकारी मानें।</li>
+        <li><b>आपातकाल:</b> किसी आपात स्थिति में पेरेंट्स सीधे स्कूल या ड्राइवर से संपर्क करें, केवल इस ऐप पर निर्भर न रहें।</li>
+        <li><b>बदलाव:</b> स्कूल ये नियम समय-समय पर बदल सकता है। लॉगिन जारी रखने का मतलब है कि आप नए नियमों से सहमत हैं।</li>
+      </ol>
+    </div>
+    <div class="foot"><button id="closeTerms" class="btn-main">ठीक है, बंद करें</button></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, set, get, update, remove, onValue, push, query, orderByChild, equalTo }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* ============ 1) CONFIG — सिर्फ databaseURL बदलना है ============ */
+const ADMIN_EMAIL = "rf1211145@gmail.com";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAbVjhUlobnvlhJRVHYuDMVvSDcYzNFdD0",
+  authDomain: "school-b8d20.firebaseapp.com",
+  databaseURL: "https://school-b8d20-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "school-b8d20",
+  storageBucket: "school-b8d20.firebasestorage.app",
+  messagingSenderId: "182382888649",
+  appId: "1:182382888649:web:48484d70289be3a0372f18"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const $ = id => document.getElementById(id);
+const emailKey = e => e.toLowerCase().replace(/\./g, ",");   // DB key में '.' नहीं चलता
+
+/* ============ 2) LOGIN + TERMS ============ */
+$("agree").onchange = e => $("googleBtn").disabled = !e.target.checked;
+$("openTerms").onclick = () => $("termsModal").classList.remove("hidden");
+$("closeTerms").onclick = () => $("termsModal").classList.add("hidden");
+
+$("googleBtn").onclick = async () => {
+  $("loginMsg").textContent = "";
+  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch (err) { $("loginMsg").textContent = "लॉगिन नहीं हो पाया: " + err.code; }
+};
+document.querySelectorAll(".logoutBtn").forEach(b => b.onclick = async () => { await signOut(auth); location.reload(); });
+$("logout0").onclick = async () => { await signOut(auth); location.reload(); };
+
+function show(id){
+  ["loginView","noAccessView","driverView","parentView","managerView"].forEach(v => $(v).classList.add("hidden"));
+  $(id).classList.remove("hidden");
+}
+
+onAuthStateChanged(auth, async user => {
+  if (!user) { show("loginView"); return; }
+  const email = user.email.toLowerCase();
+  try {
+    if (email === ADMIN_EMAIL) { show("managerView"); startManager(user); return; }
+    const snap = await get(ref(db, "roles/" + emailKey(email)));
+    const r = snap.val();
+    if (r && r.role === "driver") { show("driverView"); startDriver(user, r); }
+    else { show("parentView"); startParent(user, r || { name: user.displayName }); }
+  } catch (e) {
+    $("noAccessEmail").textContent = "Error: " + e.message;
+    show("noAccessView");
+  }
+});
+
+/* ============ 3) MAP HELPERS ============ */
+function makeMap(el){
+  const map = L.map(el).setView([26.8467, 80.9462], 13);          // default: Lucknow
+  const street = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" });
+  const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "Tiles © Esri" });
+  street.addTo(map);
+  L.control.layers({ "Normal": street, "Satellite": sat }).addTo(map);
+  setTimeout(() => map.invalidateSize(), 200);
+  return map;
+}
+const busIcon = label => L.divIcon({
+  className: "", iconSize: [60, 44], iconAnchor: [30, 22],
+  html: `<div class="busicon">🚌</div><div class="buslabel">${label}</div>`
+});
+function ago(ts){
+  const s = Math.max(0, Math.round((Date.now() - ts) / 1000));
+  if (s < 60) return s + " सेकंड पहले";
+  if (s < 3600) return Math.floor(s / 60) + " मिनट पहले";
+  return Math.floor(s / 3600) + " घंटे पहले";
+}
+const isLive = b => b && b.sharing && (Date.now() - b.updatedAt) < 30000;   // 30 सेकंड से पुराना = ऑफलाइन
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+/* ============ 4) DRIVER PANEL ============ */
+function startDriver(user, role){
+  const busId = role.busId;
+  $("drvWho").textContent = (role.name || user.email);
+  $("drvBus").textContent = busId;
+  const map = makeMap("drvMap");
+  let marker = null, timer = null, wakeLock = null, sharing = false;
+
+  const busRef = ref(db, "buses/" + busId);
+
+  function setUI(on, text){
+    $("drvDot").className = "dot " + (on ? "on" : "");
+    $("drvStatus").textContent = text;
+    $("drvBtn").textContent = on ? "Stop Sharing Location" : "Start Sharing Location";
+    $("drvBtn").className = on ? "btn-stop" : "btn-main";
+  }
+
+  function drawMe(lat, lng){
+    if (!marker) marker = L.marker([lat, lng], { icon: busIcon(busId) }).addTo(map);
+    else marker.setLatLng([lat, lng]);
+    map.setView([lat, lng], Math.max(map.getZoom(), 16));
+  }
+
+  function sendLocation(){
+    navigator.geolocation.getCurrentPosition(async pos => {
+      const { latitude: lat, longitude: lng, speed, heading, accuracy } = pos.coords;
+      drawMe(lat, lng);
+      try {
+        await set(busRef, {
+          lat, lng,
+          speed: speed != null ? Math.round(speed * 3.6) : 0,   // km/h
+          heading: heading ?? 0,
+          accuracy: Math.round(accuracy),
+          sharing: true,
+          driver: role.name || user.email,
+          updatedAt: Date.now()
+        });
+        setUI(true, "लोकेशन शेयर हो रही है ✔");
+        $("drvMeta").innerHTML = `Bus: <b>${esc(busId)}</b> · अंतिम अपडेट: ${new Date().toLocaleTimeString()} · सटीकता ±${Math.round(accuracy)} मी.`;
+      } catch (e) { setUI(true, "Firebase में सेव नहीं हुआ: " + e.code); }
+    }, err => {
+      setUI(sharing, "GPS Error: " + err.message + " (लोकेशन की अनुमति दें)");
+    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+  }
+
+  async function start(){
+    if (!navigator.geolocation) { alert("आपका ब्राउज़र GPS सपोर्ट नहीं करता।"); return; }
+    sharing = true;
+    sendLocation();                              // तुरंत पहली लोकेशन
+    timer = setInterval(sendLocation, 5000);     // फिर हर 5 सेकंड में
+    try { wakeLock = await navigator.wakeLock?.request("screen"); } catch (e) {}   // स्क्रीन ऑन रखें
+  }
+  async function stop(){
+    sharing = false;
+    clearInterval(timer);
+    try { await wakeLock?.release(); } catch (e) {}
+    try { await update(busRef, { sharing: false, updatedAt: Date.now() }); } catch (e) {}
+    setUI(false, "लोकेशन शेयरिंग बंद है");
+  }
+
+  let kids = {}, on = {};
+  function drawKids(){
+    $("drvKids").innerHTML = "<b>बच्चे — बस में बिठाने पर 'बैठा', उतारने पर 'उतारा' दबाएँ</b>";
+    Object.entries(kids).forEach(([id, k]) => {
+      const isOn = !!(on[k.pk] && on[k.pk][id]);
+      const d = document.createElement("div"); d.className = "useritem";
+      d.innerHTML = `<div><b>${esc(k.name)}</b><br><span class="meta">${esc(k.stop)}</span></div>`;
+      const b = document.createElement("button");
+      b.textContent = isOn ? "उतारा" : "बैठा";
+      b.style.cssText = isOn ? "background:#d92d20;color:#fff;padding:8px 16px" : "background:#f5b800;color:#1c2333;padding:8px 16px";
+      b.onclick = () => set(ref(db, `onboard/${busId}/${k.pk}/${id}`), isOn ? null : k.name);
+      d.appendChild(b); $("drvKids").appendChild(d);
+    });
+  }
+  onValue(ref(db, "approved/" + busId), x => { kids = x.val() || {}; drawKids(); });
+  onValue(ref(db, "onboard/" + busId), x => { on = x.val() || {}; drawKids(); });
+
+  $("drvBtn").onclick = () => sharing ? stop() : start();
+  document.addEventListener("visibilitychange", async () => {
+    if (sharing && document.visibilityState === "visible") { try { wakeLock = await navigator.wakeLock?.request("screen"); } catch (e) {} }
+  });
+
+  // ड्राइवर बटन दबाने से पहले भी अपनी लोकेशन मैप पर देख सके
+  navigator.geolocation?.getCurrentPosition(p => drawMe(p.coords.latitude, p.coords.longitude), () => {}, { enableHighAccuracy: true });
+}
+
+/* ============ 5) PARENT PANEL ============ */
+function startParent(user, prof){
+  const me = emailKey(user.email);
+  $("parWho").textContent = prof.name || user.email;
+  const map = makeMap("parMap");
+  const markers = {}, unsubs = {}, watched = {}, last = {};
+  let kids = {}, first = true;
+  const stat = { pending: "⏳ अप्रूवल बाकी", approved: "✔ अप्रूव्ड", rejected: "✖ रिजेक्ट" };
+
+  function info(){
+    const v = last[Object.keys(last)[0]];
+    if (!v) { $("parDot").className = "dot"; $("parStatus").textContent = "बच्चा अभी बस में नहीं है — ड्राइवर के बिठाने पर लोकेशन दिखेगी"; $("parMeta").textContent = ""; return; }
+    const live = isLive(v);
+    $("parDot").className = "dot " + (live ? "on" : "off");
+    $("parStatus").textContent = live ? "बच्चा बस में है — बस लाइव चल रही है" : "बच्चा बस में है, पर बस का सिग्नल नहीं आ रहा";
+    $("parMeta").textContent = `अंतिम अपडेट: ${ago(v.updatedAt)} · गति: ${v.speed ?? 0} km/h`;
+  }
+
+  function watchBuses(){
+    [...new Set(Object.values(kids).filter(k => k.status === "approved").map(k => k.busId))].forEach(bus => {
+      if (watched[bus]) return; watched[bus] = true;
+      onValue(ref(db, `onboard/${bus}/${me}`), s => {
+        if (unsubs[bus]) { unsubs[bus](); delete unsubs[bus]; }
+        if (!s.exists()) {                              // बच्चा बस में नहीं → लोकेशन छुपाएँ
+          if (markers[bus]) { map.removeLayer(markers[bus]); delete markers[bus]; }
+          delete last[bus]; first = true; info(); return;
+        }
+        unsubs[bus] = onValue(ref(db, "buses/" + bus), bs => {
+          const v = bs.val(); if (!v || v.lat == null) return;
+          last[bus] = v; const pos = [v.lat, v.lng];
+          if (!markers[bus]) markers[bus] = L.marker(pos, { icon: busIcon(bus) }).addTo(map); else markers[bus].setLatLng(pos);
+          if (first) { map.setView(pos, 16); first = false; } else if ($("parFollow").checked) map.panTo(pos);
+          info();
+        }, () => {});
+      }, () => {});
+    });
+  }
+
+  function drawKids(){
+    const box = $("parKids"); box.innerHTML = "";
+    const ids = Object.keys(kids);
+    if (!ids.length) box.innerHTML = '<div class="meta">अभी कोई बच्चा नहीं जोड़ा है।</div>';
+    ids.forEach(id => {
+      const k = kids[id], fees = k.fees || {}; let rows = "", tot = 0;
+      Object.keys(fees).sort().forEach(m => {
+        const f = fees[m], rem = (f.due || 0) - (f.paid || 0); tot += rem;
+        rows += `<tr><td>${m}</td><td>₹${f.due || 0}</td><td>₹${f.paid || 0}</td><td style="color:${rem > 0 ? "#d92d20" : "#12a150"}">₹${rem}</td></tr>`;
+      });
+      const d = document.createElement("div"); d.className = "busitem"; d.style.cursor = "default";
+      d.innerHTML = `<b>${esc(k.name)} <span>${stat[k.status] || ""}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · ${esc(k.stop)}</div>` +
+        (rows ? `<table style="width:100%;font-size:.85rem;margin-top:6px"><tr><th align="left">महीना</th><th align="left">फीस</th><th align="left">जमा</th><th align="left">बाकी</th></tr>${rows}<tr><td colspan="3"><b>कुल बाकी</b></td><td><b>₹${tot}</b></td></tr></table>` : "");
+      box.appendChild(d);
+    });
+    watchBuses();
+  }
+
+  onValue(query(ref(db, "children"), orderByChild("pk"), equalTo(me)), s => { kids = s.val() || {}; drawKids(); },
+    e => $("kMsg").textContent = "Error: " + e.code);
+
+  $("kAdd").onclick = async () => {
+    const name = $("kName").value.trim(), cls = $("kCls").value.trim(), stop = $("kStop").value.trim();
+    const busId = $("kBus").value.trim().toUpperCase().replace(/[.#$\[\]\/\s]/g, "");
+    if (!name || !busId) { $("kMsg").textContent = "बच्चे का नाम और Bus ID भरें।"; return; }
+    try {
+      await set(push(ref(db, "children")), { pk: me, parentName: user.displayName || "", parentEmail: user.email, name, cls, busId, stop, status: "pending", createdAt: Date.now() });
+      $("kMsg").textContent = "रिक्वेस्ट भेज दी गई ✔ — स्कूल के अप्रूवल का इंतज़ार करें।";
+      ["kName", "kCls", "kBus", "kStop"].forEach(i => $(i).value = "");
+    } catch (e) { $("kMsg").textContent = "Error: " + e.code; }
+  };
+  setInterval(info, 1000);
+}
+
+/* ============ 6) MANAGER PANEL ============ */
+function startManager(user){
+  $("mgrWho").textContent = user.email;
+  const map = makeMap("mgrMap");
+  const markers = {};
+  let buses = {}, fitted = false;
+
+  function renderBuses(){
+    const ids = Object.keys(buses);
+    $("busList").innerHTML = ids.length ? "" : '<div class="meta">अभी कोई बस डेटा नहीं है।</div>';
+    ids.sort().forEach(id => {
+      const b = buses[id], live = isLive(b);
+      const div = document.createElement("div");
+      div.className = "busitem";
+      div.innerHTML = `<b>${esc(id)} <span><span class="dot ${live ? "on" : "off"}"></span> ${live ? "Live" : "Offline"}</span></b>
+        <div class="meta">${esc(b.driver || "-")} · ${b.speed ?? 0} km/h · ${ago(b.updatedAt)}</div>`;
+      div.onclick = () => b.lat != null && map.setView([b.lat, b.lng], 16);
+      $("busList").appendChild(div);
+    });
+  }
+
+  onValue(ref(db, "buses"), snap => {
+    buses = snap.val() || {};
+    Object.keys(buses).forEach(id => {
+      const b = buses[id]; if (b.lat == null) return;
+      if (!markers[id]) markers[id] = L.marker([b.lat, b.lng], { icon: busIcon(id) }).addTo(map);
+      else markers[id].setLatLng([b.lat, b.lng]);
+      markers[id].setOpacity(isLive(b) ? 1 : 0.45);
+    });
+    if (!fitted && Object.keys(markers).length) {
+      map.fitBounds(L.featureGroup(Object.values(markers)).getBounds().pad(0.3), { maxZoom: 16 });
+      fitted = true;
+    }
+    renderBuses();
+  });
+  setInterval(renderBuses, 5000);
+
+  // ---- बच्चों के अप्रूवल + फीस ----
+  let kids = {};
+  $("fMonth").value = new Date().toISOString().slice(0, 7);
+  function drawFees(){
+    const k = kids[$("fKid").value], f = (k && k.fees) || {};
+    $("fList").innerHTML = Object.keys(f).sort().map(m => `<div class="useritem"><span>${m}: फीस ₹${f[m].due} · जमा ₹${f[m].paid} · बाकी <b>₹${f[m].due - f[m].paid}</b></span></div>`).join("") || '<div class="meta">कोई फीस एंट्री नहीं।</div>';
+  }
+  onValue(ref(db, "children"), snap => {
+    kids = snap.val() || {};
+    const sel = $("fKid").value; $("pendList").innerHTML = ""; $("fKid").innerHTML = "";
+    Object.entries(kids).forEach(([id, k]) => {
+      if (k.status === "pending") {
+        const d = document.createElement("div"); d.className = "useritem";
+        d.innerHTML = `<div><b>${esc(k.name)}</b> (Class ${esc(k.cls)})<br><span class="meta">Bus ${esc(k.busId)} · ${esc(k.stop)}<br>Parent: ${esc(k.parentName)} ${esc(k.parentEmail)}</span></div>`;
+        const ok = document.createElement("button"); ok.textContent = "Approve"; ok.style.cssText = "background:#d1fadf;color:#12a150";
+        ok.onclick = () => update(ref(db), { [`children/${id}/status`]: "approved", [`approved/${k.busId}/${id}`]: { name: k.name, pk: k.pk, stop: k.stop || "" } });
+        const no = document.createElement("button"); no.textContent = "Reject";
+        no.onclick = () => update(ref(db, "children/" + id), { status: "rejected" });
+        d.append(ok, no); $("pendList").appendChild(d);
+      } else if (k.status === "approved") {
+        const o = document.createElement("option"); o.value = id; o.textContent = `${k.name} (Bus ${k.busId})`; $("fKid").appendChild(o);
+      }
+    });
+    if (sel) $("fKid").value = sel;
+    if (!$("pendList").children.length) $("pendList").innerHTML = '<div class="meta">कोई नई रिक्वेस्ट नहीं।</div>';
+    drawFees();
+  });
+  $("fKid").onchange = drawFees;
+  $("fSave").onclick = async () => {
+    const id = $("fKid").value, m = $("fMonth").value, due = Number($("fDue").value), paid = Number($("fPaid").value || 0);
+    if (!id || !m || !due) { $("fMsg").textContent = "बच्चा, महीना और फीस भरें।"; return; }
+    try { await set(ref(db, `children/${id}/fees/${m}`), { due, paid }); $("fMsg").textContent = "सेव हो गया ✔"; }
+    catch (e) { $("fMsg").textContent = "Error: " + e.code; }
+  };
+
+  // ---- ड्राइवर मैनेजमेंट ----
+  $("uAdd").onclick = async () => {
+    const name = $("uName").value.trim(), email = $("uEmail").value.trim().toLowerCase();
+    const role = $("uRole").value, busId = $("uBus").value.trim().toUpperCase().replace(/[.#$\[\]\/\s]/g, "");
+    if (!name || !email || !busId) { $("uMsg").textContent = "नाम, ईमेल और Bus ID तीनों भरें।"; return; }
+    try {
+      await set(ref(db, "roles/" + emailKey(email)), { name, email, role, busId });
+      $("uMsg").textContent = "सेव हो गया ✔";
+      $("uName").value = $("uEmail").value = $("uBus").value = "";
+    } catch (e) { $("uMsg").textContent = "Error: " + e.code; }
+  };
+
+  onValue(ref(db, "roles"), snap => {
+    const r = snap.val() || {};
+    $("userList").innerHTML = Object.keys(r).length ? "" : '<div class="meta">अभी कोई यूज़र नहीं।</div>';
+    Object.keys(r).forEach(k => {
+      const u = r[k], div = document.createElement("div");
+      div.className = "useritem";
+      div.innerHTML = `<div><b>${esc(u.name)}</b> (${esc(u.role)} · ${esc(u.busId)})<br><span class="meta">${esc(u.email)}</span></div>`;
+      const del = document.createElement("button"); del.textContent = "हटाएँ";
+      del.onclick = () => confirm(u.name + " को हटाएँ?") && remove(ref(db, "roles/" + k));
+      div.appendChild(del);
+      $("userList").appendChild(div);
+    });
+  });
+}
+</script>
+</body>
+</html>

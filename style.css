@@ -1,0 +1,102 @@
+/* School Bus Tracker — style.css */
+:root{
+  --ink:#16213a; --ink2:#232f4d; --bus:#ffc400; --bus-d:#e0aa00;
+  --bg:#eef1f6; --card:#fff; --line:#e2e6ee; --muted:#6b7488;
+  --ok:#0f9d58; --bad:#d93025; --r:16px;
+  --sh:0 1px 2px rgba(22,33,58,.06),0 6px 18px rgba(22,33,58,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:"Hind","Noto Sans Devanagari",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.45}
+.hidden{display:none!important}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+
+/* ---------- buttons & inputs ---------- */
+button{font:inherit;font-weight:600;border:0;border-radius:12px;padding:12px 18px;cursor:pointer;transition:transform .08s,filter .15s}
+button:active{transform:scale(.97)}
+.btn-main{background:var(--bus);color:var(--ink);box-shadow:inset 0 -3px 0 var(--bus-d)}
+.btn-main:hover{filter:brightness(1.05)}
+.btn-main:disabled{background:#e4e7ee;color:#9aa2b4;box-shadow:none;cursor:not-allowed}
+.btn-stop{background:var(--bad);color:#fff;box-shadow:inset 0 -3px 0 #a8221a}
+.btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+input,select{font:inherit;width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{outline:0;border-color:var(--ink);box-shadow:0 0 0 4px rgba(255,196,0,.35)}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--ink)}
+
+/* ---------- login ---------- */
+#loginView{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:
+   repeating-linear-gradient(-45deg,transparent 0 22px,rgba(22,33,58,.06) 22px 44px),
+   linear-gradient(var(--bus) 0 42%,var(--bg) 42%)}
+.login-card{background:var(--card);border-radius:22px;padding:30px 26px 26px;max-width:420px;width:100%;box-shadow:0 18px 50px rgba(22,33,58,.2);border-top:10px solid var(--ink)}
+.login-card h1{margin:0 0 6px;font-size:1.7rem;letter-spacing:-.01em}
+.login-card p{color:var(--muted);margin:0 0 22px}
+.terms-row{display:flex;gap:12px;align-items:flex-start;font-size:.95rem;margin:0 0 18px;padding:12px;background:var(--bg);border-radius:12px}
+.terms-row input{margin-top:2px;flex:none}
+.terms-row a{color:var(--ink);font-weight:700;text-decoration:underline;text-decoration-color:var(--bus-d);text-underline-offset:3px;cursor:pointer}
+#googleBtn{width:100%;padding:14px;font-size:1.05rem}
+#loginMsg{color:var(--bad);font-size:.9rem;min-height:1.3em;margin-top:12px}
+
+/* ---------- app shell ---------- */
+.panel{display:flex;flex-direction:column;height:100vh;height:100dvh}
+header.top{background:var(--bus);color:var(--ink);display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:5px solid var(--ink);position:relative;z-index:10}
+header.top h1{font-size:1.1rem;margin:0;line-height:1.15}
+header.top small{display:block;font-weight:500;font-size:.78rem;opacity:.75}
+.burger{background:var(--ink);color:#fff;font-size:1.3rem;line-height:1;padding:9px 13px;border-radius:12px}
+.main{flex:1;position:relative;min-height:0}
+.page{position:absolute;inset:0;display:none;overflow:auto}
+.page.active{display:block}
+.page.mapwrap.active{display:flex;flex-direction:column}
+.pad{padding:18px 16px 40px;max-width:680px;margin:0 auto}
+.pad h2{font-size:1.15rem;margin:26px 0 12px;display:flex;align-items:center;gap:8px}
+.pad h2::before{content:"";width:5px;height:1.1em;background:var(--bus);border-radius:3px;box-shadow:2px 0 0 var(--ink)}
+.pad h2:first-child{margin-top:4px}
+.pad>p.meta{margin-top:-4px}
+
+/* ---------- drawer ---------- */
+.drawer-bg{position:fixed;inset:0;background:rgba(10,16,32,.55);backdrop-filter:blur(2px);z-index:2999;display:none}
+.drawer-bg.open{display:block}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:280px;max-width:84vw;background:var(--ink);color:#fff;z-index:3000;transform:translateX(-102%);transition:transform .22s ease;padding:20px 14px;display:flex;flex-direction:column;gap:6px;overflow:auto;border-right:5px solid var(--bus)}
+.drawer.open{transform:none}
+.drawer h2{margin:0 6px 16px;font-size:1.15rem;color:var(--bus)}
+.drawer button{background:transparent;color:#cfd6e6;text-align:left;padding:13px 14px;border-radius:12px;font-weight:500}
+.drawer button:hover{background:var(--ink2)}
+.drawer button.sel{background:var(--bus);color:var(--ink);font-weight:700}
+.drawer .out{margin-top:auto;border:1.5px solid #3b4870;color:#fff;text-align:center}
+
+/* ---------- status bar, cards, lists ---------- */
+.bar{background:var(--card);padding:14px 16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(22,33,58,.08);position:relative;z-index:5}
+.pad .bar{border-radius:var(--r);box-shadow:var(--sh);gap:18px;justify-content:flex-start}
+.status{display:flex;align-items:center;gap:10px;font-weight:700}
+.meta{color:var(--muted);font-size:.9rem}
+.dot{width:12px;height:12px;border-radius:50%;background:#aab1c2;display:inline-block;flex:none}
+.dot.on{background:var(--ok);box-shadow:0 0 0 0 rgba(15,157,88,.5);animation:pulse 1.8s infinite}
+.dot.off{background:var(--bad)}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(15,157,88,0)}100%{box-shadow:0 0 0 0 rgba(15,157,88,0)}}
+@media(prefers-reduced-motion:reduce){.dot.on{animation:none}.drawer{transition:none}}
+
+.busitem{background:var(--card);border-radius:var(--r);padding:14px 16px;margin-bottom:12px;box-shadow:var(--sh);border-left:6px solid var(--bus);cursor:pointer}
+.busitem b{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.busitem b span{font-size:.82rem;font-weight:600;background:var(--bg);padding:3px 10px;border-radius:99px;white-space:nowrap}
+.busitem table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.9rem}
+.busitem th{color:var(--muted);font-weight:600;font-size:.8rem;text-align:left;padding:6px 4px;border-bottom:1.5px solid var(--line)}
+.busitem td{padding:7px 4px;border-bottom:1px solid var(--line)}
+.useritem{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--card);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;box-shadow:var(--sh);font-size:.95rem}
+.useritem button{padding:8px 14px;border-radius:10px;font-size:.88rem;background:var(--bg);color:var(--ink)}
+.form-grid{display:grid;gap:10px;background:var(--card);padding:16px;border-radius:var(--r);box-shadow:var(--sh)}
+.form-grid .btn-main{padding:14px}
+
+/* ---------- map ---------- */
+.map{flex:1;min-height:300px;z-index:1}
+.leaflet-container{font-family:inherit}
+.leaflet-control-layers,.leaflet-bar{border:0!important;border-radius:12px!important;box-shadow:var(--sh)!important;overflow:hidden}
+.busicon{width:38px;height:38px;margin:0 auto;border-radius:50%;background:var(--bus);border:3px solid var(--ink);display:grid;place-items:center;font-size:19px;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+.buslabel{width:max-content;margin:3px auto 0;background:var(--ink);color:#fff;font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px}
+
+/* ---------- terms modal ---------- */
+.modal-bg{position:fixed;inset:0;background:rgba(10,16,32,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:5000}
+.modal{background:#fff;border-radius:20px;max-width:560px;width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;border-top:8px solid var(--bus)}
+.modal h2{margin:0;padding:18px 22px;font-size:1.1rem;border-bottom:1px solid var(--line)}
+.modal .content{padding:8px 22px;overflow:auto;font-size:.95rem;line-height:1.65}
+.modal .content li{margin-bottom:8px}
+.modal .foot{padding:14px 22px;border-top:1px solid var(--line);text-align:right}

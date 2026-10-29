@@ -5,64 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>School Bus Live Tracking</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<style>
-  :root{--ink:#1c2333;--muted:#667085;--line:#dde1e8;--bg:#f2f4f7;--card:#fff;--yellow:#f5b800;--green:#12a150;--red:#d92d20}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",sans-serif;background:var(--bg);color:var(--ink)}
-  .hidden{display:none!important}
-  button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:12px 18px;font-weight:600}
-  .btn-main{background:var(--yellow);color:var(--ink)}
-  .btn-main:disabled{opacity:.45;cursor:not-allowed}
-  .btn-stop{background:var(--red);color:#fff}
-  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
-  input,select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;width:100%}
-  header.top{background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;gap:10px}
-  header.top h1{font-size:1.05rem;margin:0}
-  header.top small{color:#c5cbd8;display:block;font-weight:400}
-  header.top button{padding:8px 14px;background:#2c3550;color:#fff}
-
-  /* login */
-  #loginView{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(180deg,var(--yellow) 0 38%,var(--bg) 38%)}
-  .login-card{background:var(--card);border-radius:16px;padding:28px 24px;max-width:420px;width:100%;box-shadow:0 8px 30px rgba(0,0,0,.12)}
-  .login-card h1{margin:0 0 4px;font-size:1.5rem}
-  .login-card p{color:var(--muted);margin:0 0 20px}
-  .terms-row{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;margin:16px 0}
-  .terms-row input{width:auto;margin-top:3px}
-  .terms-row a{color:#0b5bd3;cursor:pointer;text-decoration:underline}
-  #googleBtn{width:100%}
-  #loginMsg{color:var(--red);font-size:.9rem;min-height:1.2em;margin-top:10px}
-
-  /* panels */
-  .panel{display:flex;flex-direction:column;height:100vh}
-  .panel .body{flex:1;display:flex;flex-direction:column;min-height:0}
-  .map{flex:1;min-height:300px}
-  .bar{background:var(--card);padding:14px 16px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
-  .status{display:flex;align-items:center;gap:8px;font-weight:600}
-  .dot{width:11px;height:11px;border-radius:50%;background:#98a2b3;display:inline-block}
-  .dot.on{background:var(--green);box-shadow:0 0 0 4px rgba(18,161,80,.2)}
-  .dot.off{background:var(--red)}
-  .meta{color:var(--muted);font-size:.9rem}
-  .mgr{flex:1;display:grid;grid-template-columns:340px 1fr;min-height:0}
-  .side{background:var(--card);border-right:1px solid var(--line);overflow:auto;padding:14px}
-  .side h3{margin:14px 0 8px;font-size:1rem}
-  .busitem{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
-  .busitem:hover{border-color:var(--yellow)}
-  .busitem b{display:flex;justify-content:space-between}
-  .form-grid{display:grid;gap:8px}
-  .useritem{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.86rem;border-bottom:1px solid var(--line);padding:8px 0}
-  .useritem button{padding:4px 10px;background:#fee4e2;color:var(--red);font-size:.8rem}
-  .busicon{font-size:26px;text-align:center;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
-  .buslabel{background:var(--ink);color:#fff;font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px;white-space:nowrap;margin-top:2px}
-  @media(max-width:800px){.mgr{grid-template-columns:1fr;grid-template-rows:auto 60vh}.side{max-height:45vh;border-right:0;border-bottom:1px solid var(--line)}}
-
-  /* modal */
-  .modal-bg{position:fixed;inset:0;background:rgba(15,20,35,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:5000}
-  .modal{background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:88vh;display:flex;flex-direction:column}
-  .modal h2{margin:0;padding:18px 20px;border-bottom:1px solid var(--line);font-size:1.15rem}
-  .modal .content{padding:6px 20px;overflow:auto;font-size:.93rem;line-height:1.6}
-  .modal .content li{margin-bottom:6px}
-  .modal .foot{padding:14px 20px;border-top:1px solid var(--line);text-align:right}
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -89,86 +34,36 @@
   <button id="logout0" class="hidden"></button>
 </div>
 
-<!-- ================= DRIVER ================= -->
 <div id="driverView" class="panel hidden">
-  <header class="top">
-    <h1>ड्राइवर पैनल <small id="drvWho"></small></h1>
-    <button class="logoutBtn">Logout</button>
-  </header>
-  <div class="body">
-    <div class="bar">
-      <div>
-        <div class="status"><span class="dot" id="drvDot"></span><span id="drvStatus">लोकेशन शेयरिंग बंद है</span></div>
-        <div class="meta" id="drvMeta">Bus: <b id="drvBus">-</b></div>
-      </div>
-      <button id="drvBtn" class="btn-main">Start Sharing Location</button>
-    </div>
-    <div id="drvKids" class="side" style="max-height:35vh;border:0;border-bottom:1px solid var(--line)"></div>
-    <div id="drvMap" class="map"></div>
-  </div>
+  <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>ड्राइवर पैनल<small id="drvWho"></small></h1></header>
+  <div class="drawer-bg"></div>
+  <nav class="drawer"><h2>ड्राइवर पैनल</h2><button data-p="dMap">🗺 मैप और शेयरिंग</button><button data-p="dKids">👨‍🎓 बच्चों की लिस्ट</button><button class="logoutBtn out">Logout</button></nav>
+  <main class="main"><section id="dMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="drvDot"></span><span id="drvStatus">लोकेशन शेयरिंग बंद है</span></div><div class="meta" id="drvMeta">Bus: <b id="drvBus">-</b></div></div><button id="drvBtn" class="btn-main">Start Sharing Location</button></div><div id="drvMap" class="map"></div></section>
+<section id="dKids" class="page pad"><h2>बच्चे</h2><div id="drvKids"></div></section>
+</main>
 </div>
-
-<!-- ================= PARENT ================= -->
 <div id="parentView" class="panel hidden">
-  <header class="top">
-    <h1>पेरेंट्स पैनल <small id="parWho"></small></h1>
-    <button class="logoutBtn">Logout</button>
-  </header>
-  <div class="body">
-    <div class="bar">
-      <div>
-        <div class="status"><span class="dot" id="parDot"></span><span id="parStatus">बस की जानकारी लोड हो रही है…</span></div>
-        <div class="meta" id="parMeta"></div>
-      </div>
-      <label class="meta" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="parFollow" checked style="width:auto"> बस को फॉलो करें</label>
-    </div>
-    <div class="side" style="max-height:42vh;border:0;border-bottom:1px solid var(--line)">
-      <h3 style="margin-top:0">मेरे बच्चे और फीस</h3><div id="parKids"></div>
-      <h3>बच्चे को बस में जोड़ें (एडमिन अप्रूवल के बाद एक्टिव)</h3>
-      <div class="form-grid">
-        <input id="kName" placeholder="बच्चे का नाम"><input id="kCls" placeholder="क्लास">
-        <input id="kBus" placeholder="Bus ID (स्कूल से पूछें, जैसे BUS1)"><input id="kStop" placeholder="पिकअप जगह / स्टॉप">
-        <button id="kAdd" class="btn-main">रिक्वेस्ट भेजें</button><div id="kMsg" class="meta"></div>
-      </div>
-    </div>
-    <div id="parMap" class="map"></div>
-  </div>
+  <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>पेरेंट पैनल<small id="parWho"></small></h1></header>
+  <div class="drawer-bg"></div>
+  <nav class="drawer"><h2>पेरेंट पैनल</h2><button data-p="pMap">🗺 बस का मैप</button><button data-p="pKids">👨‍🎓 मेरे बच्चे और फीस</button><button data-p="pAdd">➕ बच्चा जोड़ें</button><button class="logoutBtn out">Logout</button></nav>
+  <main class="main"><section id="pMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="parDot"></span><span id="parStatus">…</span></div><div class="meta" id="parMeta"></div></div><label class="meta" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="parFollow" checked style="width:auto"> फॉलो करें</label></div><div id="parMap" class="map"></div></section>
+<section id="pKids" class="page pad"><h2>मेरे बच्चे, रूट और फीस</h2><div id="parKids"></div></section>
+<section id="pAdd" class="page pad"><h2>बच्चे को बस में जोड़ें</h2><p class="meta">रिक्वेस्ट स्कूल एडमिन अप्रूव करेगा, उसके बाद बच्चा एक्टिव होगा।</p>
+<div class="form-grid"><input id="kName" placeholder="बच्चे का नाम"><input id="kCls" placeholder="क्लास"><input id="kBus" placeholder="Bus ID (स्कूल से पूछें, जैसे BUS1)"><input id="kStop" placeholder="पिकअप जगह / रूट का स्टॉप"><button id="kAdd" class="btn-main">रिक्वेस्ट भेजें</button><div id="kMsg" class="meta"></div></div></section>
+</main>
 </div>
-
-<!-- ================= MANAGER ================= -->
 <div id="managerView" class="panel hidden">
-  <header class="top">
-    <h1>स्कूल मैनेजर डैशबोर्ड <small id="mgrWho"></small></h1>
-    <button class="logoutBtn">Logout</button>
-  </header>
-  <div class="mgr">
-    <div class="side">
-      <h3 style="margin-top:0">सभी बसें (लाइव)</h3>
-      <div id="busList"><div class="meta">अभी कोई बस डेटा नहीं है।</div></div>
-
-      <h3>नए बच्चों की रिक्वेस्ट (Approval)</h3><div id="pendList"></div>
-      <h3>फीस सेट करें</h3>
-      <div class="form-grid">
-        <select id="fKid"></select><input id="fMonth" type="month">
-        <input id="fDue" type="number" placeholder="इस महीने की फीस ₹"><input id="fPaid" type="number" placeholder="अब तक जमा ₹">
-        <button id="fSave" class="btn-main">Save Fee</button><div id="fMsg" class="meta"></div>
-      </div>
-      <div id="fList"></div>
-      <h3>ड्राइवर जोड़ें</h3>
-      <div class="form-grid">
-        <input id="uName" placeholder="नाम">
-        <input id="uEmail" type="email" placeholder="Gmail ID (जैसे abc@gmail.com)">
-        <select id="uRole"><option value="driver">Driver</option></select>
-        <input id="uBus" placeholder="Bus ID (जैसे BUS1)">
-        <button id="uAdd" class="btn-main">Save User</button>
-        <div id="uMsg" class="meta"></div>
-      </div>
-
-      <h3>सभी यूज़र्स</h3>
-      <div id="userList"></div>
-    </div>
-    <div id="mgrMap" class="map"></div>
-  </div>
+  <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>स्कूल डैशबोर्ड<small id="mgrWho"></small></h1></header>
+  <div class="drawer-bg"></div>
+  <nav class="drawer"><h2>स्कूल डैशबोर्ड</h2><button data-p="mMap">🗺 लाइव मैप</button><button data-p="mReq">✅ नई रिक्वेस्ट</button><button data-p="mStu">👨‍🎓 बच्चे और रूट</button><button data-p="mFee">💰 फीस और बजट</button><button data-p="mBus">🚌 बसें और ड्राइवर</button><button class="logoutBtn out">Logout</button></nav>
+  <main class="main"><section id="mMap" class="page mapwrap active"><div id="mgrMap" class="map"></div></section>
+<section id="mReq" class="page pad"><h2>नए बच्चों की रिक्वेस्ट</h2><div id="pendList"></div></section>
+<section id="mStu" class="page pad"><h2>अप्रूव्ड बच्चे, बस और पिकअप</h2><div id="stuList"></div></section>
+<section id="mFee" class="page pad"><h2>कुल हिसाब</h2><div id="feeSum" class="bar"></div><h2>फीस सेट करें</h2>
+<div class="form-grid"><select id="fKid"></select><input id="fMonth" type="month"><input id="fDue" type="number" placeholder="इस महीने की फीस ₹"><input id="fPaid" type="number" placeholder="अब तक जमा ₹"><button id="fSave" class="btn-main">Save Fee</button><div id="fMsg" class="meta"></div></div><div id="fList"></div></section>
+<section id="mBus" class="page pad"><h2>सभी बसें (लाइव)</h2><div id="busList"></div><h2>ड्राइवर जोड़ें</h2>
+<div class="form-grid"><input id="uName" placeholder="ड्राइवर का नाम"><input id="uEmail" type="email" placeholder="Gmail ID"><select id="uRole"><option value="driver">Driver</option></select><input id="uBus" placeholder="Bus ID (जैसे BUS1)"><button id="uAdd" class="btn-main">Save Driver</button><div id="uMsg" class="meta"></div></div><h2>सभी ड्राइवर</h2><div id="userList"></div></section>
+</main>
 </div>
 
 <!-- ================= TERMS MODAL ================= -->
@@ -251,6 +146,20 @@ onAuthStateChanged(auth, async user => {
     $("noAccessEmail").textContent = "Error: " + e.message;
     show("noAccessView");
   }
+});
+
+document.querySelectorAll(".panel").forEach(v => {
+  const dr = v.querySelector(".drawer"), bg = v.querySelector(".drawer-bg");
+  const toggle = o => { dr.classList.toggle("open", o); bg.classList.toggle("open", o); };
+  v.querySelector(".burger").onclick = () => toggle(true);
+  bg.onclick = () => toggle(false);
+  const items = dr.querySelectorAll("button[data-p]");
+  items[0].classList.add("sel");
+  items.forEach(b => b.onclick = () => {
+    v.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === b.dataset.p));
+    items.forEach(x => x.classList.toggle("sel", x === b));
+    toggle(false); setTimeout(() => window.dispatchEvent(new Event("resize")), 60);
+  });
 });
 
 /* ============ 3) MAP HELPERS ============ */
@@ -496,6 +405,14 @@ function startManager(user){
     });
     if (sel) $("fKid").value = sel;
     if (!$("pendList").children.length) $("pendList").innerHTML = '<div class="meta">कोई नई रिक्वेस्ट नहीं।</div>';
+    const ap = Object.values(kids).filter(k => k.status === "approved");
+    let due = 0, paid = 0;
+    ap.forEach(k => Object.values(k.fees || {}).forEach(f => { due += f.due || 0; paid += f.paid || 0; }));
+    $("feeSum").innerHTML = `<span>कुल फीस: <b>₹${due}</b></span><span>जमा: <b style="color:#12a150">₹${paid}</b></span><span>बाकी: <b style="color:#d92d20">₹${due - paid}</b></span>`;
+    $("stuList").innerHTML = ap.map(k => {
+      const r = Object.values(k.fees || {}).reduce((a, f) => a + (f.due || 0) - (f.paid || 0), 0);
+      return `<div class="busitem" style="cursor:default"><b>${esc(k.name)} <span>बाकी ₹${r}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · पिकअप: ${esc(k.stop)}<br>Parent: ${esc(k.parentName)} ${esc(k.parentEmail)}</div></div>`;
+    }).join("") || '<div class="meta">कोई अप्रूव्ड बच्चा नहीं।</div>';
     drawFees();
   });
   $("fKid").onchange = drawFees;

@@ -249,3 +249,31 @@ header.top small{color:var(--muted)}
 .nextcard small{color:#f8cf62;font-weight:600;display:block}
 .nextcard b{display:block;font-size:1.25rem}
 .nextcard button{padding:11px 20px}
+
+/* ===== leaderboard + date header ===== */
+.datehead{font-weight:700;font-size:1.15rem;color:#f8cf62;margin:2px 0 8px}
+.podium{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:20px;margin-bottom:12px;border:1px solid;box-shadow:var(--sh)}
+.podium.r1{background:linear-gradient(135deg,rgba(248,207,98,.32),rgba(230,160,56,.1));border-color:#e6a038}
+.podium.r2{background:linear-gradient(135deg,rgba(200,208,225,.22),rgba(150,160,185,.07));border-color:#aab3c8}
+.podium.r3{background:linear-gradient(135deg,rgba(205,127,50,.3),rgba(150,90,40,.08));border-color:#cd7f32}
+.podium.bad{background:linear-gradient(135deg,rgba(217,48,37,.28),rgba(217,48,37,.06));border-color:#d93025}
+.podium .medal{font-size:2rem;min-width:42px;text-align:center;font-weight:700}
+.podium div{flex:1}.podium b{display:block;font-size:1.1rem}.podium small{color:var(--muted)}
+.podium em{font-style:normal;font-weight:700;font-size:1.02rem;text-align:right}
+.plainrow{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line)}
+.plainrow span{color:var(--muted);min-width:34px}.plainrow b{flex:1;font-weight:500}
+.plainrow small{color:var(--muted)}.plainrow em{font-style:normal;color:#f8cf62}
+
+/* ===== admin-only contact line ===== */
+.podium .tel{display:block;margin-top:4px;color:#f8cf62}
+.plainrow{flex-wrap:wrap}.plainrow .tel{flex:1 1 100%;padding-left:46px;color:#f8cf62}
+.tel a{color:#f8cf62;text-decoration:none}
+
+/* ===== notices + holidays ===== */
+textarea{font:inherit;width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#0f1016;color:#f2f3f7;resize:vertical}
+textarea:focus{outline:0;border-color:#e6a038;box-shadow:0 0 0 4px rgba(230,160,56,.22)}
+.notice{padding:14px 16px;border-radius:16px;margin-bottom:12px;background:linear-gradient(135deg,rgba(70,80,190,.3),rgba(70,80,190,.08));border:1px solid #4a56c8}
+.notice b{display:block}.notice span{display:block;color:#cfd6e6;margin-top:4px;white-space:pre-wrap}
+.notice small{display:block;color:#9aa5ff;margin-bottom:2px}
+.notice button{margin-top:10px;padding:6px 14px;background:rgba(255,255,255,.08);color:#ff8a80;font-size:.82rem}
+.holiday{padding:14px 16px;border-radius:16px;margin-bottom:12px;background:linear-gradient(135deg,rgba(15,157,88,.3),rgba(15,157,88,.08));border:1px solid #0f9d58;font-weight:600}

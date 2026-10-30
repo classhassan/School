@@ -225,3 +225,27 @@ header.top small{color:var(--muted)}
 
 /* ===== school logo ===== */
 .brand img.logo{width:120px;height:120px;border-radius:50%;background:#fff;padding:0;object-fit:cover;box-shadow:0 12px 34px rgba(0,0,0,.45),0 0 0 4px rgba(230,160,56,.5);margin-bottom:30px}
+
+/* ===== pickup pins, attendance ===== */
+.pin{width:32px;height:32px;margin:0 auto;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.9rem;border:3px solid #140e00;box-shadow:0 3px 8px rgba(0,0,0,.4)}
+.pin.go{background:var(--gold);color:#140e00}.pin.on{background:#4ade80;color:#06210f}.pin.abs{background:#6b7280;color:#fff}
+.busitem b span.near{background:rgba(248,207,98,.22);color:#f8cf62}
+.attrow{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.attrow span{flex:1 1 100%;font-size:.85rem;color:var(--muted)}
+.seg{padding:9px 16px;border-radius:99px;background:rgba(255,255,255,.07);color:#cfd6e6;font-size:.88rem}
+.seg.on{background:rgba(15,157,88,.25);color:#4ade80}.seg.off{background:rgba(217,48,37,.25);color:#ff8a80}
+#pickMap{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+
+/* ===== driver stats, alerts ===== */
+.alert{margin:10px 14px;padding:12px 16px;border-radius:14px;font-weight:600}
+.alert.warn{background:rgba(217,48,37,.25);color:#ff8a80;border:1px solid #d93025}
+.alert.ok{background:rgba(15,157,88,.2);color:#4ade80;border:1px solid #0f9d58}
+.chip{display:inline-block;padding:9px 15px;border-radius:99px;margin:4px 6px 0 0;background:rgba(255,255,255,.05);color:#6f768a;font-size:.9rem}
+.chip.on{background:rgba(248,207,98,.2);color:#f8cf62}
+
+/* ===== arriving card ===== */
+.nextcard{margin:10px 14px 0;padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,rgba(248,207,98,.28),rgba(230,160,56,.14));border:1px solid #e6a038;display:flex;flex-wrap:wrap;gap:10px;align-items:center;position:relative;z-index:6}
+.nextcard>div{flex:1 1 100%}
+.nextcard small{color:#f8cf62;font-weight:600;display:block}
+.nextcard b{display:block;font-size:1.25rem}
+.nextcard button{padding:11px 20px}

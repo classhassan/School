@@ -58,9 +58,10 @@
 <div id="driverView" class="panel hidden">
   <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>Driver Panel<small id="drvWho"></small></h1><span class="role">Driver</span></header>
   <div class="drawer-bg"></div>
-  <nav class="drawer"><h2>Driver Panel</h2><button data-p="dMap">🗺 Map & Sharing</button><button data-p="dKids">👨‍🎓 Children List</button><button data-p="dInst">📲 Install App</button><button class="logoutBtn out">Logout</button></nav>
-  <main class="main"><section id="dMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="drvDot"></span><span id="drvStatus">Location sharing is off</span></div><div class="meta" id="drvMeta">Bus: <b id="drvBus">-</b></div></div><button id="drvBtn" class="btn-main">Start Sharing Location</button></div><div id="drvEmpty" class="empty"><div class="ic">📍</div><b>Location sharing is off</b><span>Tap “Start Sharing Location” and the map opens here.</span></div><div id="drvMap" class="map hidden"></div></section>
-<section id="dKids" class="page pad"><h2>Children</h2><div id="drvKids"></div></section>
+  <nav class="drawer"><h2>Driver Panel</h2><button data-p="dMap">🗺 Map & Sharing</button><button data-p="dKids">👨‍🎓 Children List</button><button data-p="dStats">🏆 My Stats</button><button data-p="dInst">📲 Install App</button><button class="logoutBtn out">Logout</button></nav>
+  <main class="main"><section id="dMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="drvDot"></span><span id="drvStatus">Location sharing is off</span></div><div class="meta" id="drvMeta">Bus: <b id="drvBus">-</b></div></div><button id="drvBtn" class="btn-main">Start Sharing Location</button></div><div id="drvAlert" class="alert hidden"></div><div id="drvNext" class="nextcard hidden"></div><div id="drvEmpty" class="empty"><div class="ic">📍</div><b>Location sharing is off</b><span>Tap “Start Sharing Location” and the map opens here.</span></div><div id="drvMap" class="map hidden"></div></section>
+<section id="dKids" class="page pad"><h2>Children</h2><div class="form-grid" style="margin-bottom:14px"><select id="drvRound"></select></div><div id="drvKids"></div></section>
+<section id="dStats" class="page pad"><h2>My Stats</h2><div id="drvStats"></div></section>
 <section id="dInst" class="page pad"><h2>Install the app</h2>
 <div class="form-grid"><p class="meta" style="margin:0">Add Bus Tracker to your home screen for one-tap access, a full-screen view and faster loading.</p><button class="btn-main instBtn">📲 Install App</button></div>
 <h2>Manual install</h2>
@@ -75,7 +76,7 @@
   <main class="main"><section id="pMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="parDot"></span><span id="parStatus">…</span></div><div class="meta" id="parMeta"></div></div><label class="meta" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="parFollow" checked style="width:auto"> Follow</label></div><div id="parEmpty" class="empty"><div class="ic">🚌</div><b>Your child is not on the bus yet</b><span>The bus map opens here automatically as soon as the driver marks your child as boarded.</span></div><div id="parMap" class="map hidden"></div></section>
 <section id="pKids" class="page pad"><h2>My children, route & fees</h2><div id="parKids"></div></section>
 <section id="pAdd" class="page pad"><h2>Add a child to the bus</h2><p class="meta">The school admin will approve your request, after which your child becomes active.</p>
-<div class="form-grid"><input id="kName" placeholder="Child’s name"><input id="kCls" placeholder="Class"><input id="kBus" placeholder="Bus ID (ask your school, e.g. BUS1)"><input id="kStop" placeholder="Pickup location / route stop"><button id="kAdd" class="btn-main">Send request</button><div id="kMsg" class="meta"></div></div></section>
+<div class="form-grid"><input id="kName" placeholder="Child’s name"><input id="kCls" placeholder="Class"><input id="kBus" placeholder="Bus ID (ask your school, e.g. BUS1)"><button id="kPick" class="btn-ghost" type="button">📍 Select pickup location on map</button><div id="kLoc" class="meta">No location selected</div><button id="kAdd" class="btn-main">Send request</button><div id="kMsg" class="meta"></div></div></section>
 <section id="pInst" class="page pad"><h2>Install the app</h2>
 <div class="form-grid"><p class="meta" style="margin:0">Add Bus Tracker to your home screen for one-tap access, a full-screen view and faster loading.</p><button class="btn-main instBtn">📲 Install App</button></div>
 <h2>Manual install</h2>
@@ -87,7 +88,7 @@
   <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>School Dashboard<small id="mgrWho"></small></h1><span class="role">Admin</span></header>
   <div class="drawer-bg"></div>
   <nav class="drawer"><h2>🚌 School Dashboard</h2><button data-p="mHome">📊 Dashboard</button><button data-p="mMap">🗺 Live Map</button><button data-p="mReq">✅ New Requests</button><button data-p="mStu">👨‍🎓 Students & Routes</button><button data-p="mFee">💰 Fees & Revenue</button><button data-p="mBus">🚌 Drivers</button><button data-p="mSet">🏫 School Location</button><button data-p="mInst">📲 Install App</button><button class="logoutBtn out">Logout</button></nav>
-  <main class="main"><section id="mHome" class="page pad active"><h2>Today at a glance</h2><div class="stats"><div class="stat"><span id="stLive">0</span><small>Live buses</small></div><div class="stat"><span id="stReq">0</span><small>New Requests</small></div><div class="stat"><span id="stKids">0</span><small>Approved students</small></div><div class="stat warn"><span id="stDue">₹0</span><small>Fees due</small></div></div><h2>All buses</h2><div id="busList"></div></section>
+  <main class="main"><section id="mHome" class="page pad active"><h2>Today at a glance</h2><div class="stats"><div class="stat"><span id="stLive">0</span><small>Live buses</small></div><div class="stat"><span id="stBoard">0</span><small>Children on board</small></div><div class="stat"><span id="stReq">0</span><small>New Requests</small></div><div class="stat"><span id="stKids">0</span><small>Approved students</small></div><div class="stat warn"><span id="stDue">₹0</span><small>Fees due</small></div></div><h2>All buses</h2><div id="busList"></div></section>
 <section id="mMap" class="page mapwrap"><div id="mgrEmpty" class="empty"><div class="ic">🗺</div><b>No bus is sharing its location right now</b><span>The map opens automatically as soon as a driver starts sharing.</span></div><div id="mgrMap" class="map hidden"></div></section>
 <section id="mReq" class="page pad"><h2>New student requests</h2><div id="pendList"></div></section>
 <section id="mStu" class="page pad"><h2>Approved students, bus & pickup</h2><div id="stuList"></div></section>
@@ -97,7 +98,9 @@
 <div class="form-grid"><input id="fMonth" type="month"><select id="fFilter"><option value="all">All students</option><option value="paid">Paid</option><option value="pending">Not paid</option></select></div>
 <div id="feeSum" class="stats" style="margin-top:12px"></div><div id="fList" style="margin-top:12px"></div></section>
 <section id="mBus" class="page pad"><h2>Add driver</h2>
-<div class="form-grid"><input id="uName" placeholder="Driver’s name"><input id="uEmail" type="email" placeholder="Gmail ID"><select id="uRole"><option value="driver">Driver</option></select><input id="uBus" placeholder="Bus ID (e.g. BUS1)"><button id="uAdd" class="btn-main">Save Driver</button><div id="uMsg" class="meta"></div></div><h2>All drivers</h2><div id="userList"></div></section>
+<div class="form-grid"><input id="uName" placeholder="Driver’s name"><input id="uEmail" type="email" placeholder="Gmail ID"><select id="uRole"><option value="driver">Driver</option></select><input id="uBus" placeholder="Bus ID (e.g. BUS1)"><button id="uAdd" class="btn-main">Save Driver</button><div id="uMsg" class="meta"></div></div><h2>Bus rounds & departure time</h2>
+<div class="form-grid"><input id="rBus" placeholder="Bus ID (e.g. BUS1)"><select id="rNo"><option value="1">Round 1</option><option value="2">Round 2</option><option value="3">Round 3</option><option value="4">Round 4</option></select><input id="rTime" type="time"><label class="meta" style="display:flex;gap:8px;align-items:center"><input id="rAll" type="checkbox" style="width:auto"> Assign all students of this bus to this round</label><button id="rSave" class="btn-main">Save round</button><div id="rMsg" class="meta"></div></div><div id="rList" style="margin-top:12px"></div>
+<h2>All drivers</h2><div id="userList"></div></section>
 <section id="mSet" class="page pad"><h2>School location</h2><p class="meta">Bus distance is measured from this point.</p>
 <div class="form-grid"><input id="sName" placeholder="School name"><input id="sLat" type="number" step="any" placeholder="Latitude (e.g. 26.8467)"><input id="sLng" type="number" step="any" placeholder="Longitude (e.g. 80.9462)"><button id="sGps" class="btn-ghost">📍 Use my current location (stand inside the school)</button><button id="sSave" class="btn-main">Save School Location</button><div id="sMsg" class="meta"></div></div></section>
 <section id="mInst" class="page pad"><h2>Install the app</h2>
@@ -107,6 +110,12 @@
 <div class="busitem" style="cursor:default"><b>iPhone (Safari)</b><div class="meta">Tap Share, then “Add to Home Screen”.</div></div></section>
 </main>
 </div>
+
+<div id="pickModal" class="modal-bg hidden"><div class="modal"><h2>Select pickup location</h2>
+<div class="content"><p class="meta">Tap the map or drag the pin to the exact spot where your child boards the bus. You can change it later.</p></div>
+<div id="pickMap" style="height:300px;flex:none"></div>
+<div class="content"><input id="pickLabel" placeholder="Landmark / address (e.g. near Shiv Mandir)" style="margin:12px 0"></div>
+<div class="foot"><button id="pickGps" class="btn-ghost">📍 My location</button> <button id="pickX" class="btn-ghost">Cancel</button> <button id="pickOk" class="btn-main">Confirm</button></div></div></div>
 
 <!-- ================= TERMS MODAL ================= -->
 <div id="termsModal" class="modal-bg hidden">
@@ -245,6 +254,36 @@ function owed(k){                                   // months since registration
   return out;
 }
 
+const dateKey = d => ym(d) + "-" + String(d.getDate()).padStart(2, "0");
+const hav = (a, b, c, d) => { const t = x => x * Math.PI / 180, q = Math.sin(t(c - a) / 2) ** 2 + Math.cos(t(a)) * Math.cos(t(c)) * Math.sin(t(d - b) / 2) ** 2; return 12742 * Math.asin(Math.sqrt(q)); };
+
+const fmtMin = m => { const h = Math.floor(m / 60) % 24; return ((h + 11) % 12 + 1) + ":" + String(m % 60).padStart(2, "0") + (h < 12 ? " AM" : " PM"); };
+const hm = t => +t.slice(0, 2) * 60 + +t.slice(3, 5);
+const nowMin = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); };
+const SPEED_LIMIT = 40;
+const MSGS = ["Sunday reset: a rested driver is a safe driver.","New week, new streak — let’s go!","Every child you pick up is a family’s trust.","Smooth driving today makes tomorrow’s ride easier.","Halfway there. Stay alert, stay steady.","Almost the weekend — finish strong!","Safe roads are built one careful trip at a time."];
+
+function rewards(m){                                  // points = days present − days absent (min 0)
+  const vals = Object.keys(m).sort().map(d => m[d]), present = vals.filter(v => v === 1).length;
+  let streak = 0; for (let i = vals.length - 1; i >= 0 && vals[i] === 1; i--) streak++;
+  const l30 = vals.slice(-30);
+  return { present, absent: vals.length - present, streak, points: Math.max(0, present - (vals.length - present)), perfect: l30.length === 30 && l30.every(v => v === 1) };
+}
+
+/* ---- pickup-location picker (map modal) ---- */
+let pickMap = null, pickMarker = null;
+function openPicker(init, cb){
+  $("pickModal").classList.remove("hidden");
+  const c = init && init.lat != null ? [init.lat, init.lng] : school ? [school.lat, school.lng] : [26.8467, 80.9462];
+  if (!pickMap) { pickMap = makeMap("pickMap"); pickMap.on("click", e => pickMarker.setLatLng(e.latlng)); }
+  if (!pickMarker) pickMarker = L.marker(c, { draggable: true }).addTo(pickMap); else pickMarker.setLatLng(c);
+  pickMap.setView(c, 16); setTimeout(() => pickMap.invalidateSize(), 80);
+  $("pickLabel").value = (init && init.label) || "";
+  $("pickGps").onclick = () => navigator.geolocation.getCurrentPosition(p => { const q = [p.coords.latitude, p.coords.longitude]; pickMarker.setLatLng(q); pickMap.setView(q, 17); }, e => alert("GPS error: " + e.message), { enableHighAccuracy: true });
+  $("pickX").onclick = () => $("pickModal").classList.add("hidden");
+  $("pickOk").onclick = () => { const p = pickMarker.getLatLng(); $("pickModal").classList.add("hidden"); cb(p.lat, p.lng, $("pickLabel").value.trim()); };
+}
+
 /* ---- PWA install ---- */
 let deferred = null;
 const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone;
@@ -314,7 +353,10 @@ function startDriver(user, role){
     navigator.geolocation.getCurrentPosition(async pos => {
       const { latitude: lat, longitude: lng, speed, heading, accuracy } = pos.coords;
       showMap(map, "drvMap", "drvEmpty", true);
-      drawMe(lat, lng);
+      drawMe(lat, lng); here = { lat, lng }; drawKids();
+      if (lastPt) { const dk = hav(lastPt.lat, lastPt.lng, lat, lng); if (dk < 1) tripKm += dk; } lastPt = { lat, lng };
+      const kmh = (speed || 0) * 3.6;
+      if (kmh > SPEED_LIMIT) { alerts++; flash(`⚠ Slow down! ${Math.round(kmh)} km/h (limit ${SPEED_LIMIT})`, "warn"); navigator.vibrate?.(300); }
       try {
         await set(busRef, {
           lat, lng,
@@ -326,7 +368,7 @@ function startDriver(user, role){
           updatedAt: Date.now()
         });
         setUI(true, "Sharing location ✔");
-        $("drvMeta").innerHTML = `Bus: <b>${esc(busId)}</b> · Last update: ${new Date().toLocaleTimeString()} · accuracy ±${Math.round(accuracy)} m` + (school ? "<br>" + distText({ lat, lng, speed: Math.round((speed || 0) * 3.6) }) : "");
+        $("drvMeta").innerHTML = `Bus: <b>${esc(busId)}</b> · Last update: ${new Date().toLocaleTimeString()} · accuracy ±${Math.round(accuracy)} m` + (school ? "<br>" + distText({ lat, lng, speed: Math.round((speed || 0) * 3.6) }) : "") + `<br>Trip: ${tripKm.toFixed(1)} km · ${Math.round((Date.now() - tripStart) / 60000)} min · ${sessionBoarded} picked`;
       } catch (e) { setUI(true, "Firebase save failed: " + e.code); }
     }, err => {
       setUI(sharing, "GPS Error: " + err.message + " (allow location permission)");
@@ -336,6 +378,7 @@ function startDriver(user, role){
   async function start(){
     if (!navigator.geolocation) { alert("Your browser does not support GPS."); return; }
     sharing = true;
+    tripStart = Date.now(); tripKm = 0; alerts = 0; sessionBoarded = 0; lastPt = null;
     sendLocation();
     timer = setInterval(sendLocation, 5000);
     try { wakeLock = await navigator.wakeLock?.request("screen"); } catch (e) {}
@@ -347,24 +390,97 @@ function startDriver(user, role){
     try { await update(busRef, { sharing: false, updatedAt: Date.now() }); } catch (e) {}
     setUI(false, "Location sharing is off");
     showMap(map, "drvMap", "drvEmpty", false);
+    finishTrip();
   }
 
-  let kids = {}, on = {};
+  let kids = {}, on = {}, att = {}, ord = {}, here = null;
+  let skipped = {}, lastCand = null, rounds = {}, curRound = 1, roundSig = "", arrSeen = {}, sessionBoarded = 0, tripKm = 0, alerts = 0, lastPt = null, tripStart = 0;
+  const me = emailKey(user.email);
+  function flash(msg, kind){ const a = $("drvAlert"); a.textContent = msg; a.className = "alert " + kind; clearTimeout(flash.t); flash.t = setTimeout(() => a.className = "alert hidden", 7000); }
+  function recArr(id){ if (arrSeen[id] || new Date().getHours() >= 12) return; arrSeen[id] = true; set(ref(db, `arrivals/${busId}/${id}/${today}`), nowMin()); }
+  async function toggle(id, k, isOn){
+    await set(ref(db, `onboard/${busId}/${k.pk}/${id}`), isOn ? null : k.name);
+    if (!isOn) { sessionBoarded++; recArr(id); learn(id); if (new Date().getHours() < 12) set(ref(db, `presence/${busId}/${id}/${today}`), 1); }
+  }
+  function fillRounds(){
+    const list = [...new Set([1, ...Object.keys(rounds).map(Number), ...Object.values(kids).map(k => k.round || 1)])].sort(), sig = list.join() + JSON.stringify(rounds);
+    if (sig === roundSig) return; roundSig = sig;
+    $("drvRound").innerHTML = list.map(r => `<option value="${r}">Round ${r}${rounds[r] ? " · departs " + fmtMin(hm(rounds[r].time)) : ""}</option>`).join("");
+    if (!list.includes(curRound)) curRound = list[0];
+    $("drvRound").value = curRound;
+  }
+  $("drvRound").onchange = () => { curRound = +$("drvRound").value; drawKids(); };
+  async function finishTrip(){
+    if (!sessionBoarded) return;
+    const r = ref(db, "driverStats/" + me), st = (await get(r)).val() || {}, y = new Date(); y.setDate(y.getDate() - 1);
+    const clean = alerts === 0, gain = sessionBoarded * 10 + 50 + (clean ? 30 : 0);
+    await set(r, { points: (st.points || 0) + gain, trips: (st.trips || 0) + 1, km: Math.round(((st.km || 0) + tripKm) * 10) / 10, clean: (st.clean || 0) + (clean ? 1 : 0), lastDay: today,
+      streak: st.lastDay === today ? (st.streak || 1) : st.lastDay === dateKey(y) ? (st.streak || 0) + 1 : 1 });
+    flash(`🎉 Trip complete! +${gain} points${clean ? " (clean-driving bonus!)" : ""}`, "ok");
+  }
+  const today = dateKey(new Date()), pins = {};
+  const pinIcon = (cls, txt, label) => L.divIcon({ className: "", iconSize: [80, 48], iconAnchor: [40, 18], html: `<div class="pin ${cls}">${txt}</div><div class="buslabel">${esc(label)}</div>` });
+
+  async function learn(id){                                   // remember morning boarding order
+    if (new Date().getHours() >= 12) return;
+    const t = (await get(ref(db, `trips/${busId}/${today}`))).val() || {};
+    if (t[id]) return;
+    const p = Object.keys(t).length + 1;
+    await set(ref(db, `trips/${busId}/${today}/${id}`), p);
+    const o = (await get(ref(db, `order/${busId}/${id}`))).val() || { sum: 0, n: 0 };
+    await set(ref(db, `order/${busId}/${id}`), { sum: o.sum + p, n: o.n + 1 });
+  }
+
   function drawKids(){
-    $("drvKids").innerHTML = "<b>Children — on boarding, tap 'Boarded', on leaving, tap 'Dropped' </b>";
-    Object.entries(kids).forEach(([id, k]) => {
-      const isOn = !!(on[k.pk] && on[k.pk][id]);
-      const d = document.createElement("div"); d.className = "useritem";
-      d.innerHTML = `<div><b>${esc(k.name)}</b><br><span class="meta">${esc(k.stop)}</span></div>`;
-      const b = document.createElement("button");
-      b.textContent = isOn ? "Dropped" : "Boarded";
-      b.style.cssText = isOn ? "background:#d92d20;color:#fff;padding:8px 16px" : "background:#f5b800;color:#1c2333;padding:8px 16px";
-      b.onclick = () => set(ref(db, `onboard/${busId}/${k.pk}/${id}`), isOn ? null : k.name);
-      d.appendChild(b); $("drvKids").appendChild(d);
+    fillRounds();
+    const rows = Object.entries(kids).filter(([, k]) => (k.round || 1) === curRound).map(([id, k]) => ({ id, k, isOn: !!(on[k.pk] && on[k.pk][id]), going: att[id] !== false,
+      avg: ord[id] ? ord[id].sum / ord[id].n : 99, dist: here && k.lat != null ? hav(here.lat, here.lng, k.lat, k.lng) : null }));
+    rows.sort((a, b) => (a.isOn - b.isOn) || (b.going - a.going) || (a.avg - b.avg) || ((a.dist ?? 9e9) - (b.dist ?? 9e9)));
+    $("drvKids").innerHTML = '<div class="meta" style="margin-bottom:12px">Pickup list in your usual route order. Children who are absent today are skipped.</div>';
+    let n = 0;
+    const vis = new Set(rows.map(r => r.id));
+    Object.keys(pins).forEach(i => { if (!vis.has(i)) { map.removeLayer(pins[i]); delete pins[i]; } });
+    rows.forEach(({ id, k, isOn, going, dist }) => {
+      const todo = going && !isOn; if (todo) n++;
+      const near = todo && dist != null && dist < 0.5;
+      if (todo && dist != null && dist < 0.15) recArr(id);
+      if (k.lat != null) {
+        const ic = pinIcon(isOn ? "on" : going ? "go" : "abs", isOn ? "✓" : going ? n : "✕", going ? k.name : k.name + " (absent)");
+        if (!pins[id]) pins[id] = L.marker([k.lat, k.lng], { icon: ic }).addTo(map); else pins[id].setIcon(ic).setLatLng([k.lat, k.lng]);
+      }
+      const d = document.createElement("div"); d.className = "busitem"; d.style.cursor = "default";
+      d.innerHTML = `<b>${todo ? "#" + n + " " : ""}${esc(k.name)} <span class="${near ? "near" : !going ? "bad" : isOn ? "ok" : ""}">${isOn ? "On board" : !going ? "Absent today" : near ? "Nearby — pick up here" : "Going"}</span></b><div class="meta">${esc(k.stop)}${dist != null ? " · " + (dist < 1 ? Math.round(dist * 1000) + " m" : dist.toFixed(1) + " km") + " away" : ""}</div>`;
+      if (going || isOn) {
+        const b = document.createElement("button"); b.textContent = isOn ? "Mark dropped" : "Mark boarded";
+        b.style.cssText = (isOn ? "background:#d92d20;color:#fff" : "background:var(--gold);color:#140e00") + ";padding:9px 16px;margin-top:10px";
+        b.onclick = () => toggle(id, k, isOn);
+        d.appendChild(b);
+      }
+      $("drvKids").appendChild(d);
     });
+    const cand = rows.filter(r => r.going && !r.isOn && r.dist != null && r.dist < 0.5 && !skipped[r.id]).sort((a, b) => a.dist - b.dist)[0], nx = $("drvNext");
+    if (!cand) { nx.className = "nextcard hidden"; lastCand = null; return; }
+    nx.className = "nextcard";
+    nx.innerHTML = `<div><small>Arriving — ${Math.round(cand.dist * 1000)} m</small><b>${esc(cand.k.name)}</b><span class="meta">${esc(cand.k.stop)}</span></div>`;
+    const yes = document.createElement("button"); yes.textContent = "✓ Boarded"; yes.className = "btn-main"; yes.onclick = () => toggle(cand.id, cand.k, false);
+    const no = document.createElement("button"); no.textContent = "✕ Not here"; no.className = "btn-ghost"; no.onclick = () => { skipped[cand.id] = true; drawKids(); };
+    nx.append(yes, no);
+    if (lastCand !== cand.id) { lastCand = cand.id; navigator.vibrate?.(200); }
   }
   onValue(ref(db, "approved/" + busId), x => { kids = x.val() || {}; drawKids(); });
   onValue(ref(db, "onboard/" + busId), x => { on = x.val() || {}; drawKids(); });
+  onValue(ref(db, `attendance/${busId}/${today}`), x => { att = x.val() || {}; drawKids(); });
+  onValue(ref(db, "order/" + busId), x => { ord = x.val() || {}; drawKids(); });
+  onValue(ref(db, "rounds/" + busId), x => { rounds = x.val() || {}; drawKids(); });
+  onValue(ref(db, "driverStats/" + me), x => {
+    const st = x.val() || {}, p = st.points || 0, lv = p >= 1000 ? ["🥇 Star Driver", 0] : p >= 300 ? ["🥈 Road Pro", 1000] : ["🥉 Rookie", 300];
+    const bd = [["🚌 First trip", st.trips >= 1], ["🔥 3-day streak", st.streak >= 3], ["🔥 7-day streak", st.streak >= 7], ["🛡 5 clean trips", st.clean >= 5], ["🏁 10 trips", st.trips >= 10], ["🛣 100 km", st.km >= 100]];
+    $("drvStats").innerHTML = `<div class="bar"><div><div class="status">${lv[0]} · ${p} points</div><div class="meta">${lv[1] ? lv[1] - p + " points to the next level" : "Top level reached!"}</div></div></div>
+      <div class="stats" style="margin-bottom:14px"><div class="stat"><span>${st.trips || 0}</span><small>Trips</small></div><div class="stat"><span>${st.streak || 0}🔥</span><small>Day streak</small></div><div class="stat"><span>${st.km || 0}</span><small>Total km</small></div><div class="stat"><span>${st.clean || 0}</span><small>Clean trips</small></div></div>
+      <h2>Badges</h2><div>${bd.map(([t, on]) => `<span class="chip${on ? " on" : ""}">${t}</span>`).join("")}</div>
+      <h2>Earn points</h2><div class="meta">+10 per child boarded · +50 per completed trip · +30 clean-driving bonus (stay under ${SPEED_LIMIT} km/h)</div>
+      <h2>Today’s thought</h2><div class="busitem" style="cursor:default">${MSGS[new Date().getDay()]}</div>`;
+  });
 
   $("drvBtn").onclick = () => sharing ? stop() : start();
   document.addEventListener("visibilitychange", async () => {
@@ -381,7 +497,7 @@ function startParent(user, prof){
   $("parWho").textContent = prof.name || user.email;
   const map = makeMap("parMap");
   const markers = {}, unsubs = {}, watched = {}, last = {};
-  let kids = {}, first = true;
+  let kids = {}, first = true; const att = {}, attW = {}, arr = {}, rnd = {}, rndW = {}, pres = {};
   const sl = schoolLayer(map); watchSchool(() => { sl(); info(); drawKids(); });
   const stat = { pending: "⏳ Approval pending", approved: "✔ Approved", rejected: "✖ Rejected" };
 
@@ -415,18 +531,59 @@ function startParent(user, prof){
     });
   }
 
+  function listenAtt(k, id){
+    if (!attW["P" + id]) { attW["P" + id] = true; onValue(ref(db, `presence/${k.busId}/${id}`), x => { pres[id] = x.val() || {}; drawKids(); }, () => {}); }
+    if (!attW["A" + id]) { attW["A" + id] = true; onValue(ref(db, `arrivals/${k.busId}/${id}`), x => { arr[id] = x.val() || {}; drawKids(); }, () => {}); }
+    if (!rndW[k.busId]) { rndW[k.busId] = true; onValue(ref(db, "rounds/" + k.busId), x => { rnd[k.busId] = x.val() || {}; drawKids(); }, () => {}); }
+    [0, 1].forEach(i => {
+      const d = new Date(); d.setDate(d.getDate() + i); const key = dateKey(d), w = id + key;
+      if (attW[w]) return; attW[w] = true;
+      onValue(ref(db, `attendance/${k.busId}/${key}/${id}`), x => { (att[id] = att[id] || {})[key] = x.val(); drawKids(); }, () => {});
+    });
+  }
+  function attRow(k, id, date, label){
+    const going = !(att[id] && att[id][date] === false);
+    const r = document.createElement("div"); r.className = "attrow"; r.innerHTML = `<span>${label}</span>`;
+    [["Going", true], ["Not going", false]].forEach(([t, v]) => {
+      const b = document.createElement("button"); b.textContent = t; b.className = "seg" + (going === v ? (v ? " on" : " off") : "");
+      b.onclick = () => { set(ref(db, `attendance/${k.busId}/${date}/${id}`), v ? null : false).catch(e => alert("Could not save: " + e.code)); set(ref(db, `presence/${k.busId}/${id}/${date}`), v ? null : 0).catch(() => {}); };
+      r.appendChild(b);
+    });
+    return r;
+  }
   function drawKids(){
     const box = $("parKids"); box.innerHTML = "";
     const ids = Object.keys(kids);
     if (!ids.length) box.innerHTML = '<div class="meta">No children added yet. Use “Add Child” from the menu.</div>';
     ids.forEach(id => {
       const k = kids[id], d = document.createElement("div"); d.className = "busitem"; d.style.cursor = "default";
-      let fee = "";
+      let fee = "", eta = "", rw = "";
       if (k.status === "approved") {
+        const days = Object.keys(arr[id] || {}).sort().slice(-3), rt = (rnd[k.busId] || {})[k.round || 1], tk = (arr[id] || {})[dateKey(new Date())];
+        const avg = days.length ? Math.round(days.reduce((a, x) => a + arr[id][x], 0) / days.length) : null;
+        eta = `<div class="feebox"><div><small>Round ${k.round || 1} departs</small><b>${rt ? fmtMin(hm(rt.time)) : "—"}</b></div><div><small>Usually reaches you</small><b>${avg != null ? fmtMin(avg) : "Learning…"}</b></div><div><small>Today</small><b>${tk != null ? fmtMin(tk) : "—"}</b></div></div>` + (days.length ? `<div class="meta" style="margin-top:6px">Average of the last ${days.length} day(s)</div>` : "");
+        const R = rewards(pres[id] || {}), mo = Object.entries(pres[id] || {}).filter(([d]) => d.startsWith(curMonth())), mp = mo.filter(([, v]) => v === 1).length;
+        rw = `<div class="feebox"><div><small>Reward points</small><b class="okc">${R.points} ⭐</b></div><div><small>Days present</small><b>${R.present}</b></div><div><small>Days absent</small><b class="${R.absent ? "badc" : ""}">${R.absent}</b></div></div><div class="meta" style="margin-top:6px">This month: ${mp} present of ${mo.length} school days · ${R.streak}-day streak 🔥</div><div>${[["🌟 First day", R.present >= 1], ["🔥 7-day streak", R.streak >= 7], ["🏅 Perfect 30/30", R.perfect], ["🏆 100 days", R.present >= 100]].map(([t, on]) => `<span class="chip${on ? " on" : ""}">${t}</span>`).join("")}</div><div class="meta">Points = days present − days absent (never below 0). 15 present + 15 absent = 0 points.</div>`;
         const m = curMonth(), paid = !!(k.pay && k.pay[m]), pend = owed(k);
         fee = `<div class="feebox"><div><small>Platform fee</small><b>₹${feeRate}/month</b></div><div><small>${monthLabel(m)}</small><b class="${paid ? "okc" : "badc"}">${paid ? "Paid ✔" : "Not paid"}</b></div><div><small>Outstanding</small><b class="${pend.length ? "badc" : "okc"}">₹${pend.length * feeRate}</b></div></div>` + (pend.length ? `<div class="meta" style="margin-top:8px">Pending months: ${pend.map(monthLabel).join(", ")}</div>` : "");
       }
-      d.innerHTML = `<b>${esc(k.name)} <span class="${k.status === "approved" ? "ok" : k.status === "rejected" ? "bad" : ""}">${stat[k.status] || ""}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · Pickup: ${esc(k.stop)}</div>` + fee;
+      d.innerHTML = `<b>${esc(k.name)} <span class="${k.status === "approved" ? "ok" : k.status === "rejected" ? "bad" : ""}">${stat[k.status] || ""}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · Pickup: ${esc(k.stop)}</div>` + eta + rw + fee;
+      if (k.status !== "rejected") {
+        const pb = document.createElement("button"); pb.className = "btn-ghost"; pb.style.cssText = "margin-top:10px;padding:8px 14px;font-size:.88rem";
+        pb.textContent = "📍 " + (k.lat != null ? "Change pickup location" : "Set pickup location");
+        pb.onclick = () => openPicker({ lat: k.lat, lng: k.lng, label: k.stop }, (lat, lng, label) => {
+          const u = { [`children/${id}/lat`]: lat, [`children/${id}/lng`]: lng, [`children/${id}/stop`]: label };
+          if (k.status === "approved") Object.assign(u, { [`approved/${k.busId}/${id}/lat`]: lat, [`approved/${k.busId}/${id}/lng`]: lng, [`approved/${k.busId}/${id}/stop`]: label });
+          update(ref(db), u).catch(e => alert("Could not save: " + e.code));
+        });
+        d.appendChild(pb);
+      }
+      if (k.status === "approved") {
+        listenAtt(k, id);
+        const t = new Date(), n = new Date(); n.setDate(n.getDate() + 1);
+        d.appendChild(attRow(k, id, dateKey(t), "Today — going to school?"));
+        d.appendChild(attRow(k, id, dateKey(n), "Tomorrow — going to school?"));
+      }
       box.appendChild(d);
     });
     watchBuses();
@@ -435,14 +592,16 @@ function startParent(user, prof){
   onValue(query(ref(db, "children"), orderByChild("pk"), equalTo(me)), s => { kids = s.val() || {}; drawKids(); },
     e => $("kMsg").textContent = "Error: " + e.code);
 
+  let pickLoc = null;
+  $("kPick").onclick = () => openPicker(pickLoc, (lat, lng, label) => { pickLoc = { lat, lng, label }; $("kLoc").textContent = `📍 Selected${label ? ": " + label : ""} (${lat.toFixed(5)}, ${lng.toFixed(5)})`; });
   $("kAdd").onclick = async () => {
-    const name = $("kName").value.trim(), cls = $("kCls").value.trim(), stop = $("kStop").value.trim();
+    const name = $("kName").value.trim(), cls = $("kCls").value.trim(), stop = pickLoc ? pickLoc.label : "";
     const busId = $("kBus").value.trim().toUpperCase().replace(/[.#$\[\]\/\s]/g, "");
-    if (!name || !busId) { $("kMsg").textContent = "Enter the child’s name and Bus ID."; return; }
+    if (!name || !busId || !pickLoc) { $("kMsg").textContent = "Enter name, Bus ID and select the pickup location on the map."; return; }
     try {
-      await set(push(ref(db, "children")), { pk: me, parentName: user.displayName || "", parentEmail: user.email, name, cls, busId, stop, status: "pending", createdAt: Date.now() });
+      await set(push(ref(db, "children")), { pk: me, parentName: user.displayName || "", parentEmail: user.email, name, cls, busId, stop, lat: pickLoc.lat, lng: pickLoc.lng, status: "pending", createdAt: Date.now() });
       $("kMsg").textContent = "Request sent ✔ — please wait for the school’s approval.";
-      ["kName", "kCls", "kBus", "kStop"].forEach(i => $(i).value = "");
+      ["kName", "kCls", "kBus"].forEach(i => $(i).value = ""); pickLoc = null; $("kLoc").textContent = "No location selected";
     } catch (e) { $("kMsg").textContent = "Error: " + e.code; }
   };
   setInterval(info, 1000);
@@ -453,19 +612,19 @@ function startManager(user){
   $("mgrWho").textContent = user.email;
   const map = makeMap("mgrMap");
   const markers = {};
-  let buses = {}, fitted = false;
+  let buses = {}, fitted = false, onb = {};
 
   function renderBuses(){
-    const ids = Object.keys(buses); let live = 0;
+    const ids = Object.keys(buses); let live = 0, board = 0;
     $("busList").innerHTML = ids.length ? "" : '<div class="meta">No bus data yet.</div>';
     ids.sort().forEach(id => {
-      const b = buses[id], on = isLive(b); if (on) live++;
+      const b = buses[id], on = isLive(b), cnt = Object.values(onb[id] || {}).reduce((a, q) => a + Object.keys(q).length, 0); if (on) live++; board += cnt;
       const div = document.createElement("div"); div.className = "busitem";
-      div.innerHTML = `<b>${esc(id)} <span>${on ? "🟢 Live" : "⚪ Offline"}</span></b><div class="meta">${esc(b.driver || "-")} · ${b.speed ?? 0} km/h · ${ago(b.updatedAt)}${on && distText(b) ? "<br>" + distText(b) : ""}</div>`;
+      div.innerHTML = `<b>${esc(id)} <span>${on ? "🟢 Live" : "⚪ Offline"}</span></b><div class="meta">👦 <b style="display:inline">${cnt}</b> on board · ${esc(b.driver || "-")} · ${b.speed ?? 0} km/h · ${ago(b.updatedAt)}${on && distText(b) ? "<br>" + distText(b) : ""}</div>`;
       div.onclick = () => { if (on) { document.querySelector('#managerView [data-p="mMap"]').click(); showMap(map, "mgrMap", "mgrEmpty", true); map.setView([b.lat, b.lng], 16); } };
       $("busList").appendChild(div);
     });
-    $("stLive").textContent = live;
+    $("stLive").textContent = live; $("stBoard").textContent = board;
     showMap(map, "mgrMap", "mgrEmpty", live > 0);
   }
   onValue(ref(db, "buses"), snap => {
@@ -480,6 +639,7 @@ function startManager(user){
     if (!fitted && lm.length) { map.fitBounds(L.featureGroup(lm).getBounds().pad(0.3), { maxZoom: 16 }); fitted = true; }
   });
   setInterval(renderBuses, 5000);
+  onValue(ref(db, "onboard"), x => { onb = x.val() || {}; renderBuses(); });
 
 
   const sl = schoolLayer(map);
@@ -518,6 +678,20 @@ function startManager(user){
     });
     if (!$("fList").children.length) $("fList").innerHTML = '<div class="meta">No students in this view.</div>';
   }
+  let pres = {};
+  function renderStu(){
+    $("stuList").innerHTML = "";
+    Object.entries(kids).filter(([, k]) => k.status === "approved").forEach(([id, k]) => {
+      const R = rewards((pres[k.busId] || {})[id] || {}), n = owed(k).length, d = document.createElement("div"); d.className = "busitem"; d.style.cursor = "default";
+      d.innerHTML = `<b>${esc(k.name)} <span class="${n ? "bad" : "ok"}">${n ? n + " month(s) due" : "Up to date"}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · Pickup: ${esc(k.stop)}<br>Parent: ${esc(k.parentName)} ${esc(k.parentEmail)}<br>Attendance: ${R.present} present · ${R.absent} absent · ${R.points} ⭐ · ${R.streak}-day streak</div>`;
+      const sel = document.createElement("select"); sel.style.cssText = "margin-top:10px;width:auto";
+      [1, 2, 3, 4].forEach(r => sel.add(new Option("Round " + r, r, false, (k.round || 1) === r)));
+      sel.onchange = () => update(ref(db), { [`children/${id}/round`]: +sel.value, [`approved/${k.busId}/${id}/round`]: +sel.value });
+      d.appendChild(sel); $("stuList").appendChild(d);
+    });
+    if (!$("stuList").children.length) $("stuList").innerHTML = '<div class="meta">No approved students yet.</div>';
+  }
+  onValue(ref(db, "presence"), x => { pres = x.val() || {}; renderStu(); });
   onValue(ref(db, "children"), snap => {
     kids = snap.val() || {};
     $("pendList").innerHTML = "";
@@ -526,7 +700,7 @@ function startManager(user){
       const d = document.createElement("div"); d.className = "useritem";
       d.innerHTML = `<div><b>${esc(k.name)}</b> (Class ${esc(k.cls)})<br><span class="meta">Bus ${esc(k.busId)} · ${esc(k.stop)}<br>Parent: ${esc(k.parentName)} ${esc(k.parentEmail)}</span></div>`;
       const ok = document.createElement("button"); ok.textContent = "Approve"; ok.style.cssText = "background:#d1fadf;color:#0f7a43";
-      ok.onclick = () => update(ref(db), { [`children/${id}/status`]: "approved", [`approved/${k.busId}/${id}`]: { name: k.name, pk: k.pk, stop: k.stop || "" } });
+      ok.onclick = () => update(ref(db), { [`children/${id}/status`]: "approved", [`approved/${k.busId}/${id}`]: { name: k.name, pk: k.pk, stop: k.stop || "", lat: k.lat ?? null, lng: k.lng ?? null } });
       const no = document.createElement("button"); no.textContent = "Reject";
       no.onclick = () => update(ref(db, "children/" + id), { status: "rejected" });
       d.append(ok, no); $("pendList").appendChild(d);
@@ -535,9 +709,8 @@ function startManager(user){
     const ap = Object.values(kids).filter(k => k.status === "approved");
     $("stReq").textContent = Object.values(kids).filter(k => k.status === "pending").length;
     $("stKids").textContent = ap.length;
-    $("stuList").innerHTML = ap.map(k => { const n = owed(k).length;
-      return `<div class="busitem" style="cursor:default"><b>${esc(k.name)} <span class="${n ? "bad" : "ok"}">${n ? n + " month(s) due" : "Up to date"}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · Pickup: ${esc(k.stop)}<br>Parent: ${esc(k.parentName)} ${esc(k.parentEmail)}</div></div>`; }).join("") || '<div class="meta">No approved students yet.</div>';
-    renderFees();
+    renderStu();
+    renderFees(); renderRounds();
   });
   watchSchool(() => { if (!$("feeRate").value && feeRate) $("feeRate").value = feeRate; renderFees(); });
   $("fMonth").onchange = $("fFilter").onchange = renderFees;
@@ -548,6 +721,25 @@ function startManager(user){
   };
 
 
+  let rounds = {};
+  function renderRounds(){
+    $("rList").innerHTML = "";
+    Object.keys(rounds).sort().forEach(b => Object.keys(rounds[b]).sort().forEach(r => {
+      const cnt = Object.values(kids).filter(k => k.status === "approved" && k.busId === b && (k.round || 1) == r).length;
+      const d = document.createElement("div"); d.className = "useritem";
+      d.innerHTML = `<div><b>${esc(b)} · Round ${esc(r)}</b><br><span class="meta">Departs ${fmtMin(hm(rounds[b][r].time))} · ${cnt} student(s)</span></div>`;
+      const x = document.createElement("button"); x.textContent = "Remove"; x.onclick = () => set(ref(db, `rounds/${b}/${r}`), null);
+      d.appendChild(x); $("rList").appendChild(d);
+    }));
+  }
+  onValue(ref(db, "rounds"), x => { rounds = x.val() || {}; renderRounds(); });
+  $("rSave").onclick = async () => {
+    const b = $("rBus").value.trim().toUpperCase().replace(/[.#$\[\]\/\s]/g, ""), r = $("rNo").value, t = $("rTime").value;
+    if (!b || !t) { $("rMsg").textContent = "Enter Bus ID and departure time."; return; }
+    const u = { [`rounds/${b}/${r}`]: { time: t } };
+    if ($("rAll").checked) Object.entries(kids).filter(([, k]) => k.status === "approved" && k.busId === b).forEach(([id]) => { u[`children/${id}/round`] = +r; u[`approved/${b}/${id}/round`] = +r; });
+    try { await update(ref(db), u); $("rMsg").textContent = "Saved ✔"; } catch (e) { $("rMsg").textContent = "Error: " + e.code; }
+  };
   $("uAdd").onclick = async () => {
     const name = $("uName").value.trim(), email = $("uEmail").value.trim().toLowerCase();
     const role = $("uRole").value, busId = $("uBus").value.trim().toUpperCase().replace(/[.#$\[\]\/\s]/g, "");

@@ -1,107 +1,133 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>School Bus Live Tracking</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b0c10">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<div id="installBar" class="installbar hidden"><img src="icon-192.png" alt=""><div><b>Use the Bus Tracker app</b><small>Faster, full-screen, one tap</small></div><button id="installBtn">Install</button><button id="installX" aria-label="Close">✕</button></div>
+
 <!-- ================= LOGIN ================= -->
 <div id="loginView">
   <aside class="brand">
-    <div class="logo">🚌</div>
-    <h1>बच्चों का सफ़र,<br>अब हर पल आपकी नज़र में</h1>
-    <p>स्कूल बस की लाइव ट्रैकिंग, एक सुरक्षित और भरोसेमंद सिस्टम।</p>
+    <img class="logo" src="logo.png" alt="St. Joseph School">
+    <h1>Every ride,<br>always in sight</h1>
+    <p>Live school bus tracking — a secure and reliable system.</p>
     <ul>
-      <li>बस की रियल-टाइम लोकेशन</li>
-      <li>स्कूल से दूरी और पहुँचने का अनुमान</li>
-      <li>बच्चे के बस में बैठने पर ही ट्रैकिंग चालू</li>
-      <li>फीस का साफ़ हिसाब, एक ही जगह</li>
+      <li>Real-time bus location</li>
+      <li>Distance from school and estimated arrival time</li>
+      <li>Tracking starts only after your child boards</li>
+      <li>Simple monthly platform-fee tracking</li>
     </ul>
   </aside>
   <section class="signin">
     <div class="login-card">
-      <h2>लॉगिन करें</h2>
-      <p>ड्राइवर, पेरेंट और स्कूल स्टाफ़ अपने Google अकाउंट से जारी रखें।</p>
+      <h2>Sign in</h2>
+      <p>Drivers, parents and school staff continue with their Google account.</p>
       <div class="terms-row">
         <input type="checkbox" id="agree">
-        <label for="agree">मैं <a id="openTerms">नियम व शर्तें</a> पढ़कर उनसे सहमत हूँ।</label>
+        <label for="agree">I have read and agree to the <a id="openTerms">Terms & Conditions</a>.</label>
       </div>
-      <button id="googleBtn" disabled><span class="g">G</span> Google से जारी रखें</button>
+      <button id="googleBtn" disabled><span class="g">G</span> Continue with Google</button>
       <div id="loginMsg"></div>
-      <div class="secure">🔒 आपकी लोकेशन और जानकारी सिर्फ़ स्कूल के अधिकृत लोगों को दिखती है।</div>
+      <div class="secure">🔒 Your location and data are visible only to authorised school staff.</div>
     </div>
   </section>
 </div>
 
 <!-- ================= NO ACCESS ================= -->
 <div id="noAccessView" class="hidden" style="padding:40px 20px;text-align:center">
-  <h2>आपको अभी एक्सेस नहीं मिला है</h2>
+  <h2>You don’t have access yet</h2>
   <p id="noAccessEmail" class="meta"></p>
-  <p>कृपया स्कूल मैनेजर से कहें कि वो इस ईमेल को Driver या Parent के रूप में जोड़ दें।</p>
+  <p>Ask the school manager to add your email as a Driver.</p>
   <button class="btn-ghost" onclick="document.getElementById('logout0').click()">Logout</button>
   <button id="logout0" class="hidden"></button>
 </div>
 
 <div id="driverView" class="panel hidden">
-  <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>ड्राइवर पैनल<small id="drvWho"></small></h1></header>
+  <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>Driver Panel<small id="drvWho"></small></h1><span class="role">Driver</span></header>
   <div class="drawer-bg"></div>
-  <nav class="drawer"><h2>ड्राइवर पैनल</h2><button data-p="dMap">🗺 मैप और शेयरिंग</button><button data-p="dKids">👨‍🎓 बच्चों की लिस्ट</button><button class="logoutBtn out">Logout</button></nav>
-  <main class="main"><section id="dMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="drvDot"></span><span id="drvStatus">लोकेशन शेयरिंग बंद है</span></div><div class="meta" id="drvMeta">Bus: <b id="drvBus">-</b></div></div><button id="drvBtn" class="btn-main">Start Sharing Location</button></div><div id="drvEmpty" class="empty"><div class="ic">📍</div><b>लोकेशन शेयरिंग बंद है</b><span>"Start Sharing Location" दबाते ही मैप खुल जाएगा।</span></div><div id="drvMap" class="map hidden"></div></section>
-<section id="dKids" class="page pad"><h2>बच्चे</h2><div id="drvKids"></div></section>
+  <nav class="drawer"><h2>Driver Panel</h2><button data-p="dMap">🗺 Map & Sharing</button><button data-p="dKids">👨‍🎓 Children List</button><button data-p="dInst">📲 Install App</button><button class="logoutBtn out">Logout</button></nav>
+  <main class="main"><section id="dMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="drvDot"></span><span id="drvStatus">Location sharing is off</span></div><div class="meta" id="drvMeta">Bus: <b id="drvBus">-</b></div></div><button id="drvBtn" class="btn-main">Start Sharing Location</button></div><div id="drvEmpty" class="empty"><div class="ic">📍</div><b>Location sharing is off</b><span>Tap “Start Sharing Location” and the map opens here.</span></div><div id="drvMap" class="map hidden"></div></section>
+<section id="dKids" class="page pad"><h2>Children</h2><div id="drvKids"></div></section>
+<section id="dInst" class="page pad"><h2>Install the app</h2>
+<div class="form-grid"><p class="meta" style="margin:0">Add Bus Tracker to your home screen for one-tap access, a full-screen view and faster loading.</p><button class="btn-main instBtn">📲 Install App</button></div>
+<h2>Manual install</h2>
+<div class="busitem" style="cursor:default"><b>Android (Chrome)</b><div class="meta">Tap the ⋮ menu, then “Install app” or “Add to Home screen”.</div></div>
+<div class="busitem" style="cursor:default"><b>iPhone (Safari)</b><div class="meta">Tap Share, then “Add to Home Screen”.</div></div></section>
 </main>
 </div>
 <div id="parentView" class="panel hidden">
-  <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>पेरेंट पैनल<small id="parWho"></small></h1></header>
+  <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>Parent Panel<small id="parWho"></small></h1><span class="role">Parent</span></header>
   <div class="drawer-bg"></div>
-  <nav class="drawer"><h2>पेरेंट पैनल</h2><button data-p="pMap">🗺 बस का मैप</button><button data-p="pKids">👨‍🎓 मेरे बच्चे और फीस</button><button data-p="pAdd">➕ बच्चा जोड़ें</button><button class="logoutBtn out">Logout</button></nav>
-  <main class="main"><section id="pMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="parDot"></span><span id="parStatus">…</span></div><div class="meta" id="parMeta"></div></div><label class="meta" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="parFollow" checked style="width:auto"> फॉलो करें</label></div><div id="parEmpty" class="empty"><div class="ic">🚌</div><b>बच्चा अभी बस में नहीं है</b><span>ड्राइवर के बच्चे को बिठाते ही बस का मैप यहाँ अपने आप खुल जाएगा।</span></div><div id="parMap" class="map hidden"></div></section>
-<section id="pKids" class="page pad"><h2>मेरे बच्चे, रूट और फीस</h2><div id="parKids"></div></section>
-<section id="pAdd" class="page pad"><h2>बच्चे को बस में जोड़ें</h2><p class="meta">रिक्वेस्ट स्कूल एडमिन अप्रूव करेगा, उसके बाद बच्चा एक्टिव होगा।</p>
-<div class="form-grid"><input id="kName" placeholder="बच्चे का नाम"><input id="kCls" placeholder="क्लास"><input id="kBus" placeholder="Bus ID (स्कूल से पूछें, जैसे BUS1)"><input id="kStop" placeholder="पिकअप जगह / रूट का स्टॉप"><button id="kAdd" class="btn-main">रिक्वेस्ट भेजें</button><div id="kMsg" class="meta"></div></div></section>
+  <nav class="drawer"><h2>Parent Panel</h2><button data-p="pMap">🗺 Bus Map</button><button data-p="pKids">👨‍🎓 My Children & Fees</button><button data-p="pAdd">➕ Add Child</button><button data-p="pInst">📲 Install App</button><button class="logoutBtn out">Logout</button></nav>
+  <main class="main"><section id="pMap" class="page mapwrap active"><div class="bar"><div><div class="status"><span class="dot" id="parDot"></span><span id="parStatus">…</span></div><div class="meta" id="parMeta"></div></div><label class="meta" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="parFollow" checked style="width:auto"> Follow</label></div><div id="parEmpty" class="empty"><div class="ic">🚌</div><b>Your child is not on the bus yet</b><span>The bus map opens here automatically as soon as the driver marks your child as boarded.</span></div><div id="parMap" class="map hidden"></div></section>
+<section id="pKids" class="page pad"><h2>My children, route & fees</h2><div id="parKids"></div></section>
+<section id="pAdd" class="page pad"><h2>Add a child to the bus</h2><p class="meta">The school admin will approve your request, after which your child becomes active.</p>
+<div class="form-grid"><input id="kName" placeholder="Child’s name"><input id="kCls" placeholder="Class"><input id="kBus" placeholder="Bus ID (ask your school, e.g. BUS1)"><input id="kStop" placeholder="Pickup location / route stop"><button id="kAdd" class="btn-main">Send request</button><div id="kMsg" class="meta"></div></div></section>
+<section id="pInst" class="page pad"><h2>Install the app</h2>
+<div class="form-grid"><p class="meta" style="margin:0">Add Bus Tracker to your home screen for one-tap access, a full-screen view and faster loading.</p><button class="btn-main instBtn">📲 Install App</button></div>
+<h2>Manual install</h2>
+<div class="busitem" style="cursor:default"><b>Android (Chrome)</b><div class="meta">Tap the ⋮ menu, then “Install app” or “Add to Home screen”.</div></div>
+<div class="busitem" style="cursor:default"><b>iPhone (Safari)</b><div class="meta">Tap Share, then “Add to Home Screen”.</div></div></section>
 </main>
 </div>
 <div id="managerView" class="panel hidden">
-  <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>स्कूल डैशबोर्ड<small id="mgrWho"></small></h1></header>
+  <header class="top"><button class="burger" aria-label="Menu">☰</button><h1>School Dashboard<small id="mgrWho"></small></h1><span class="role">Admin</span></header>
   <div class="drawer-bg"></div>
-  <nav class="drawer"><h2>🚌 स्कूल डैशबोर्ड</h2><button data-p="mHome">📊 डैशबोर्ड</button><button data-p="mMap">🗺 लाइव मैप</button><button data-p="mReq">✅ नई रिक्वेस्ट</button><button data-p="mStu">👨‍🎓 बच्चे और रूट</button><button data-p="mFee">💰 फीस और बजट</button><button data-p="mBus">🚌 ड्राइवर</button><button data-p="mSet">🏫 स्कूल लोकेशन</button><button class="logoutBtn out">Logout</button></nav>
-  <main class="main"><section id="mHome" class="page pad active"><h2>आज का हाल</h2><div class="stats"><div class="stat"><span id="stLive">0</span><small>लाइव बसें</small></div><div class="stat"><span id="stReq">0</span><small>नई रिक्वेस्ट</small></div><div class="stat"><span id="stKids">0</span><small>अप्रूव्ड बच्चे</small></div><div class="stat warn"><span id="stDue">₹0</span><small>फीस बाकी</small></div></div><h2>सभी बसें</h2><div id="busList"></div></section>
-<section id="mMap" class="page mapwrap"><div id="mgrEmpty" class="empty"><div class="ic">🗺</div><b>अभी कोई बस लोकेशन शेयर नहीं कर रही</b><span>किसी ड्राइवर के शेयरिंग शुरू करते ही मैप अपने आप खुल जाएगा।</span></div><div id="mgrMap" class="map hidden"></div></section>
-<section id="mReq" class="page pad"><h2>नए बच्चों की रिक्वेस्ट</h2><div id="pendList"></div></section>
-<section id="mStu" class="page pad"><h2>अप्रूव्ड बच्चे, बस और पिकअप</h2><div id="stuList"></div></section>
-<section id="mFee" class="page pad"><h2>कुल हिसाब</h2><div id="feeSum" class="bar"></div><h2>फीस सेट करें</h2>
-<div class="form-grid"><select id="fKid"></select><input id="fMonth" type="month"><input id="fDue" type="number" placeholder="इस महीने की फीस ₹"><input id="fPaid" type="number" placeholder="अब तक जमा ₹"><button id="fSave" class="btn-main">Save Fee</button><div id="fMsg" class="meta"></div></div><div id="fList"></div></section>
-<section id="mBus" class="page pad"><h2>ड्राइवर जोड़ें</h2>
-<div class="form-grid"><input id="uName" placeholder="ड्राइवर का नाम"><input id="uEmail" type="email" placeholder="Gmail ID"><select id="uRole"><option value="driver">Driver</option></select><input id="uBus" placeholder="Bus ID (जैसे BUS1)"><button id="uAdd" class="btn-main">Save Driver</button><div id="uMsg" class="meta"></div></div><h2>सभी ड्राइवर</h2><div id="userList"></div></section>
-<section id="mSet" class="page pad"><h2>स्कूल की लोकेशन</h2><p class="meta">बस की दूरी इसी जगह से नापी जाएगी।</p>
-<div class="form-grid"><input id="sName" placeholder="स्कूल का नाम"><input id="sLat" type="number" step="any" placeholder="Latitude (जैसे 26.8467)"><input id="sLng" type="number" step="any" placeholder="Longitude (जैसे 80.9462)"><button id="sGps" class="btn-ghost">📍 मेरी मौजूदा लोकेशन लें (स्कूल में खड़े होकर)</button><button id="sSave" class="btn-main">Save School Location</button><div id="sMsg" class="meta"></div></div></section>
+  <nav class="drawer"><h2>🚌 School Dashboard</h2><button data-p="mHome">📊 Dashboard</button><button data-p="mMap">🗺 Live Map</button><button data-p="mReq">✅ New Requests</button><button data-p="mStu">👨‍🎓 Students & Routes</button><button data-p="mFee">💰 Fees & Revenue</button><button data-p="mBus">🚌 Drivers</button><button data-p="mSet">🏫 School Location</button><button data-p="mInst">📲 Install App</button><button class="logoutBtn out">Logout</button></nav>
+  <main class="main"><section id="mHome" class="page pad active"><h2>Today at a glance</h2><div class="stats"><div class="stat"><span id="stLive">0</span><small>Live buses</small></div><div class="stat"><span id="stReq">0</span><small>New Requests</small></div><div class="stat"><span id="stKids">0</span><small>Approved students</small></div><div class="stat warn"><span id="stDue">₹0</span><small>Fees due</small></div></div><h2>All buses</h2><div id="busList"></div></section>
+<section id="mMap" class="page mapwrap"><div id="mgrEmpty" class="empty"><div class="ic">🗺</div><b>No bus is sharing its location right now</b><span>The map opens automatically as soon as a driver starts sharing.</span></div><div id="mgrMap" class="map hidden"></div></section>
+<section id="mReq" class="page pad"><h2>New student requests</h2><div id="pendList"></div></section>
+<section id="mStu" class="page pad"><h2>Approved students, bus & pickup</h2><div id="stuList"></div></section>
+<section id="mFee" class="page pad"><h2>Platform fee</h2>
+<div class="form-grid"><label class="meta">Monthly fee per student (₹)</label><input id="feeRate" type="number" min="0" placeholder="e.g. 20"><button id="rateSave" class="btn-main">Save monthly fee</button><div id="rateMsg" class="meta"></div></div>
+<h2>Collection status</h2>
+<div class="form-grid"><input id="fMonth" type="month"><select id="fFilter"><option value="all">All students</option><option value="paid">Paid</option><option value="pending">Not paid</option></select></div>
+<div id="feeSum" class="stats" style="margin-top:12px"></div><div id="fList" style="margin-top:12px"></div></section>
+<section id="mBus" class="page pad"><h2>Add driver</h2>
+<div class="form-grid"><input id="uName" placeholder="Driver’s name"><input id="uEmail" type="email" placeholder="Gmail ID"><select id="uRole"><option value="driver">Driver</option></select><input id="uBus" placeholder="Bus ID (e.g. BUS1)"><button id="uAdd" class="btn-main">Save Driver</button><div id="uMsg" class="meta"></div></div><h2>All drivers</h2><div id="userList"></div></section>
+<section id="mSet" class="page pad"><h2>School location</h2><p class="meta">Bus distance is measured from this point.</p>
+<div class="form-grid"><input id="sName" placeholder="School name"><input id="sLat" type="number" step="any" placeholder="Latitude (e.g. 26.8467)"><input id="sLng" type="number" step="any" placeholder="Longitude (e.g. 80.9462)"><button id="sGps" class="btn-ghost">📍 Use my current location (stand inside the school)</button><button id="sSave" class="btn-main">Save School Location</button><div id="sMsg" class="meta"></div></div></section>
+<section id="mInst" class="page pad"><h2>Install the app</h2>
+<div class="form-grid"><p class="meta" style="margin:0">Add Bus Tracker to your home screen for one-tap access, a full-screen view and faster loading.</p><button class="btn-main instBtn">📲 Install App</button></div>
+<h2>Manual install</h2>
+<div class="busitem" style="cursor:default"><b>Android (Chrome)</b><div class="meta">Tap the ⋮ menu, then “Install app” or “Add to Home screen”.</div></div>
+<div class="busitem" style="cursor:default"><b>iPhone (Safari)</b><div class="meta">Tap Share, then “Add to Home Screen”.</div></div></section>
 </main>
 </div>
 
 <!-- ================= TERMS MODAL ================= -->
 <div id="termsModal" class="modal-bg hidden">
   <div class="modal">
-    <h2>नियम व शर्तें — बच्चों की सुरक्षा और GPS ट्रैकिंग</h2>
+    <h2>Terms & Conditions — child safety and GPS tracking</h2>
     <div class="content">
       <ol>
-        <li><b>उद्देश्य:</b> यह सिस्टम केवल स्कूल बस की लाइव लोकेशन दिखाकर बच्चों की सुरक्षा और समय पर आवागमन सुनिश्चित करने के लिए है।</li>
-        <li><b>ड्राइवर की सहमति:</b> ड्राइवर की GPS लोकेशन तभी शेयर होती है जब वह खुद "Start Sharing Location" दबाता है। केवल स्कूल ड्यूटी के समय ही शेयरिंग चालू रखें; ड्यूटी खत्म होने पर बंद करें।</li>
-        <li><b>कौन क्या देख सकता है:</b> पेरेंट्स सिर्फ अपने बच्चे की बस की लोकेशन देख सकते हैं। स्कूल मैनेजर सभी बसें देख सकता है। किसी तीसरे व्यक्ति को एक्सेस नहीं मिलेगा।</li>
-        <li><b>डेटा का उपयोग:</b> लोकेशन डेटा का उपयोग केवल बस ट्रैकिंग के लिए होगा। इसे बेचा या विज्ञापन के लिए इस्तेमाल नहीं किया जाएगा। केवल बस की ताज़ा लोकेशन रखी जाती है, पुरानी हिस्ट्री सेव नहीं होती।</li>
-        <li><b>लॉगिन सुरक्षा:</b> अपना Google अकाउंट किसी के साथ शेयर न करें। लॉगिन केवल स्कूल द्वारा जोड़े गए ईमेल से ही संभव है।</li>
-        <li><b>गलत उपयोग पर रोक:</b> बस की लोकेशन के स्क्रीनशॉट या जानकारी सोशल मीडिया या किसी बाहरी व्यक्ति के साथ साझा करना मना है। उल्लंघन पर एक्सेस बंद किया जा सकता है।</li>
-        <li><b>ड्राइविंग के समय:</b> ड्राइवर गाड़ी चलाते समय फोन का उपयोग न करें। फोन को होल्डर में रखें और बटन गाड़ी रोककर ही दबाएँ।</li>
-        <li><b>सटीकता:</b> GPS लोकेशन नेटवर्क और मौसम के कारण कुछ देरी या अंतर के साथ दिख सकती है। इसे केवल अनुमानित जानकारी मानें।</li>
-        <li><b>आपातकाल:</b> किसी आपात स्थिति में पेरेंट्स सीधे स्कूल या ड्राइवर से संपर्क करें, केवल इस ऐप पर निर्भर न रहें।</li>
-        <li><b>बदलाव:</b> स्कूल ये नियम समय-समय पर बदल सकता है। लॉगिन जारी रखने का मतलब है कि आप नए नियमों से सहमत हैं।</li>
+        <li><b>Purpose:</b> This system exists only to show the live location of the school bus, helping keep children safe and on time.</li>
+        <li><b>Driver consent:</b> The driver’s GPS location is shared only when the driver taps "Start Sharing Location" to begin. Keep sharing on only during school duty hours and switch it off afterwards.</li>
+        <li><b>Who can see what:</b> Parents can see only the location of their own child’s bus. The school manager can see all buses. No third party gets access.</li>
+        <li><b>Data use:</b> Location data is used only for bus tracking. It is never sold or used for advertising. Only the latest bus location is stored; no history is kept.</li>
+        <li><b>Login security:</b> Do not share your Google account. Login is possible only with an email added by the school.</li>
+        <li><b>No misuse:</b> Sharing screenshots or bus location details on social media or with outsiders is prohibited. Access may be suspended for violations.</li>
+        <li><b>While driving:</b> Drivers must not use the phone while driving. Keep it in a holder and press buttons only when the vehicle is stopped.</li>
+        <li><b>Accuracy:</b> GPS Location may show delays or small differences because of network and weather. Treat it as approximate.</li>
+        <li><b>Emergencies:</b> In an emergency parents should contact the school or driver directly and not rely only on this app.</li>
+        <li><b>Platform fee:</b> A small monthly platform fee (set by the school) applies per registered student. It covers the tracking service only; no school or tuition fee is handled here.</li>
+        <li><b>Changes:</b> The school may update these terms from time to time. Continuing to log in means you accept the new terms.</li>
       </ol>
     </div>
-    <div class="foot"><button id="closeTerms" class="btn-main">ठीक है, बंद करें</button></div>
+    <div class="foot"><button id="closeTerms" class="btn-main">Got it, close</button></div>
   </div>
 </div>
 
@@ -113,7 +139,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signO
 import { getDatabase, ref, set, get, update, remove, onValue, push, query, orderByChild, equalTo }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* ============ 1) CONFIG — सिर्फ databaseURL बदलना है ============ */
+/* ============ 1) CONFIG — ============ */
 const ADMIN_EMAIL = "rf1211145@gmail.com";
 
 const firebaseConfig = {
@@ -130,7 +156,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 const $ = id => document.getElementById(id);
-const emailKey = e => e.toLowerCase().replace(/\./g, ",");   // DB key में '.' नहीं चलता
+const emailKey = e => e.toLowerCase().replace(/\./g, ",");
 
 /* ============ 2) LOGIN + TERMS ============ */
 $("agree").onchange = e => $("googleBtn").disabled = !e.target.checked;
@@ -140,7 +166,7 @@ $("closeTerms").onclick = () => $("termsModal").classList.add("hidden");
 $("googleBtn").onclick = async () => {
   $("loginMsg").textContent = "";
   try { await signInWithPopup(auth, new GoogleAuthProvider()); }
-  catch (err) { $("loginMsg").textContent = "लॉगिन नहीं हो पाया: " + err.code; }
+  catch (err) { $("loginMsg").textContent = "Sign-in failed: " + err.code; }
 };
 document.querySelectorAll(".logoutBtn").forEach(b => b.onclick = async () => { await signOut(auth); location.reload(); });
 $("logout0").onclick = async () => { await signOut(auth); location.reload(); };
@@ -179,11 +205,11 @@ document.querySelectorAll(".panel").forEach(v => {
   });
 });
 
-let school = null, schoolWatching = false; const schoolCbs = [];
+let school = null, feeRate = 0, schoolWatching = false; const schoolCbs = [];
 function watchSchool(cb){
   schoolCbs.push(cb); if (school) cb();
   if (schoolWatching) return; schoolWatching = true;
-  onValue(ref(db, "settings/school"), x => { school = x.val(); schoolCbs.forEach(f => f()); }, () => {});
+  onValue(ref(db, "settings"), x => { const v = x.val() || {}; school = v.school || null; feeRate = Number(v.fee) || 0; schoolCbs.forEach(f => f()); }, () => {});
 }
 function distKm(lat, lng){
   if (!school) return null;
@@ -192,8 +218,8 @@ function distKm(lat, lng){
 }
 function distText(b){
   const d = distKm(b.lat, b.lng); if (d == null) return "";
-  let t = "स्कूल से " + (d < 1 ? Math.round(d * 1000) + " मीटर" : d.toFixed(1) + " km") + " दूर (सीधी दूरी)";
-  if (b.speed > 5) t += " · लगभग " + Math.max(1, Math.round(d / b.speed * 60)) + " मिनट";
+  let t = "Distance from school: " + (d < 1 ? Math.round(d * 1000) + " m" : d.toFixed(1) + " km") + " (straight line)";
+  if (b.speed > 5) t += " · about " + Math.max(1, Math.round(d / b.speed * 60)) + " min";
   return t;
 }
 function schoolLayer(map){
@@ -208,6 +234,34 @@ function showMap(map, mapId, emptyId, on){
   $(mapId).classList.toggle("hidden", !on); $(emptyId).classList.toggle("hidden", on);
   if (on) map.invalidateSize();
 }
+
+const ym = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+const curMonth = () => ym(new Date());
+const monthLabel = m => new Date(m + "-01T00:00:00").toLocaleString("en-US", { month: "short", year: "numeric" });
+function owed(k){                                   // months since registration that are not paid
+  const out = []; const d = new Date(k.createdAt || Date.now()); d.setDate(1);
+  const end = curMonth();
+  while (ym(d) <= end) { const m = ym(d); if (!(k.pay && k.pay[m])) out.push(m); d.setMonth(d.getMonth() + 1); }
+  return out;
+}
+
+/* ---- PWA install ---- */
+let deferred = null;
+const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+function refreshInstall(){
+  $("installBar").classList.toggle("hidden", !(deferred && !standalone() && !sessionStorage.getItem("hideInstall")));
+  document.querySelectorAll(".instBtn").forEach(b => { b.disabled = !!standalone(); b.textContent = standalone() ? "✔ App already installed" : "📲 Install App"; b.onclick = doInstall; });
+}
+async function doInstall(){
+  if (deferred) { deferred.prompt(); await deferred.userChoice; deferred = null; refreshInstall(); }
+  else alert("Open your browser menu and choose “Install app” or “Add to Home screen”.");
+}
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; refreshInstall(); });
+window.addEventListener("appinstalled", () => { deferred = null; refreshInstall(); });
+$("installBtn").onclick = doInstall;
+$("installX").onclick = () => { sessionStorage.setItem("hideInstall", "1"); refreshInstall(); };
+refreshInstall();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 
 /* ============ 3) MAP HELPERS ============ */
 function makeMap(el){
@@ -225,11 +279,11 @@ const busIcon = label => L.divIcon({
 });
 function ago(ts){
   const s = Math.max(0, Math.round((Date.now() - ts) / 1000));
-  if (s < 60) return s + " सेकंड पहले";
-  if (s < 3600) return Math.floor(s / 60) + " मिनट पहले";
-  return Math.floor(s / 3600) + " घंटे पहले";
+  if (s < 60) return s + " s ago";
+  if (s < 3600) return Math.floor(s / 60) + " min ago";
+  return Math.floor(s / 3600) + " hr ago";
 }
-const isLive = b => b && b.sharing && (Date.now() - b.updatedAt) < 30000;   // 30 सेकंड से पुराना = ऑफलाइन
+const isLive = b => b && b.sharing && (Date.now() - b.updatedAt) < 30000;
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 
 /* ============ 4) DRIVER PANEL ============ */
@@ -271,39 +325,39 @@ function startDriver(user, role){
           driver: role.name || user.email,
           updatedAt: Date.now()
         });
-        setUI(true, "लोकेशन शेयर हो रही है ✔");
-        $("drvMeta").innerHTML = `Bus: <b>${esc(busId)}</b> · अंतिम अपडेट: ${new Date().toLocaleTimeString()} · सटीकता ±${Math.round(accuracy)} मी.` + (school ? "<br>" + distText({ lat, lng, speed: Math.round((speed || 0) * 3.6) }) : "");
-      } catch (e) { setUI(true, "Firebase में सेव नहीं हुआ: " + e.code); }
+        setUI(true, "Sharing location ✔");
+        $("drvMeta").innerHTML = `Bus: <b>${esc(busId)}</b> · Last update: ${new Date().toLocaleTimeString()} · accuracy ±${Math.round(accuracy)} m` + (school ? "<br>" + distText({ lat, lng, speed: Math.round((speed || 0) * 3.6) }) : "");
+      } catch (e) { setUI(true, "Firebase save failed: " + e.code); }
     }, err => {
-      setUI(sharing, "GPS Error: " + err.message + " (लोकेशन की अनुमति दें)");
+      setUI(sharing, "GPS Error: " + err.message + " (allow location permission)");
     }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
   }
 
   async function start(){
-    if (!navigator.geolocation) { alert("आपका ब्राउज़र GPS सपोर्ट नहीं करता।"); return; }
+    if (!navigator.geolocation) { alert("Your browser does not support GPS."); return; }
     sharing = true;
-    sendLocation();                              // तुरंत पहली लोकेशन
-    timer = setInterval(sendLocation, 5000);     // फिर हर 5 सेकंड में
-    try { wakeLock = await navigator.wakeLock?.request("screen"); } catch (e) {}   // स्क्रीन ऑन रखें
+    sendLocation();
+    timer = setInterval(sendLocation, 5000);
+    try { wakeLock = await navigator.wakeLock?.request("screen"); } catch (e) {}
   }
   async function stop(){
     sharing = false;
     clearInterval(timer);
     try { await wakeLock?.release(); } catch (e) {}
     try { await update(busRef, { sharing: false, updatedAt: Date.now() }); } catch (e) {}
-    setUI(false, "लोकेशन शेयरिंग बंद है");
+    setUI(false, "Location sharing is off");
     showMap(map, "drvMap", "drvEmpty", false);
   }
 
   let kids = {}, on = {};
   function drawKids(){
-    $("drvKids").innerHTML = "<b>बच्चे — बस में बिठाने पर 'बैठा', उतारने पर 'उतारा' दबाएँ</b>";
+    $("drvKids").innerHTML = "<b>Children — on boarding, tap 'Boarded', on leaving, tap 'Dropped' </b>";
     Object.entries(kids).forEach(([id, k]) => {
       const isOn = !!(on[k.pk] && on[k.pk][id]);
       const d = document.createElement("div"); d.className = "useritem";
       d.innerHTML = `<div><b>${esc(k.name)}</b><br><span class="meta">${esc(k.stop)}</span></div>`;
       const b = document.createElement("button");
-      b.textContent = isOn ? "उतारा" : "बैठा";
+      b.textContent = isOn ? "Dropped" : "Boarded";
       b.style.cssText = isOn ? "background:#d92d20;color:#fff;padding:8px 16px" : "background:#f5b800;color:#1c2333;padding:8px 16px";
       b.onclick = () => set(ref(db, `onboard/${busId}/${k.pk}/${id}`), isOn ? null : k.name);
       d.appendChild(b); $("drvKids").appendChild(d);
@@ -317,7 +371,7 @@ function startDriver(user, role){
     if (sharing && document.visibilityState === "visible") { try { wakeLock = await navigator.wakeLock?.request("screen"); } catch (e) {} }
   });
 
-  // ड्राइवर बटन दबाने से पहले भी अपनी लोकेशन मैप पर देख सके
+
   navigator.geolocation?.getCurrentPosition(p => drawMe(p.coords.latitude, p.coords.longitude), () => {}, { enableHighAccuracy: true });
 }
 
@@ -328,16 +382,16 @@ function startParent(user, prof){
   const map = makeMap("parMap");
   const markers = {}, unsubs = {}, watched = {}, last = {};
   let kids = {}, first = true;
-  const sl = schoolLayer(map); watchSchool(() => { sl(); info(); });
-  const stat = { pending: "⏳ अप्रूवल बाकी", approved: "✔ अप्रूव्ड", rejected: "✖ रिजेक्ट" };
+  const sl = schoolLayer(map); watchSchool(() => { sl(); info(); drawKids(); });
+  const stat = { pending: "⏳ Approval pending", approved: "✔ Approved", rejected: "✖ Rejected" };
 
   function info(){
     const v = last[Object.keys(last)[0]];
-    if (!v) { $("parDot").className = "dot"; $("parStatus").textContent = "बच्चा अभी बस में नहीं है — ड्राइवर के बिठाने पर लोकेशन दिखेगी"; $("parMeta").textContent = ""; return; }
+    if (!v) { $("parDot").className = "dot"; $("parStatus").textContent = "Your child is not on the bus yet — the location appears once the driver marks them as boarded"; $("parMeta").textContent = ""; return; }
     const live = isLive(v);
     $("parDot").className = "dot " + (live ? "on" : "off");
-    $("parStatus").textContent = live ? "बच्चा बस में है — बस लाइव चल रही है" : "बच्चा बस में है, पर बस का सिग्नल नहीं आ रहा";
-    $("parMeta").textContent = `अंतिम अपडेट: ${ago(v.updatedAt)} · गति: ${v.speed ?? 0} km/h` + (distText(v) ? " · " + distText(v) : "");
+    $("parStatus").textContent = live ? "Your child is on the bus — live tracking is on" : "Your child is on the bus, but the bus signal is not coming through";
+    $("parMeta").textContent = `Last update: ${ago(v.updatedAt)} · Speed: ${v.speed ?? 0} km/h` + (distText(v) ? " · " + distText(v) : "");
   }
 
   function watchBuses(){
@@ -346,7 +400,7 @@ function startParent(user, prof){
       onValue(ref(db, `onboard/${bus}/${me}`), s => {
         if (unsubs[bus]) { unsubs[bus](); delete unsubs[bus]; }
         if (!s.exists()) {
-          delete last[bus]; if (!Object.keys(last).length) showMap(map, "parMap", "parEmpty", false);                              // बच्चा बस में नहीं → लोकेशन छुपाएँ
+          delete last[bus]; if (!Object.keys(last).length) showMap(map, "parMap", "parEmpty", false);
           if (markers[bus]) { map.removeLayer(markers[bus]); delete markers[bus]; }
           delete last[bus]; first = true; info(); return;
         }
@@ -364,16 +418,15 @@ function startParent(user, prof){
   function drawKids(){
     const box = $("parKids"); box.innerHTML = "";
     const ids = Object.keys(kids);
-    if (!ids.length) box.innerHTML = '<div class="meta">अभी कोई बच्चा नहीं जोड़ा है।</div>';
+    if (!ids.length) box.innerHTML = '<div class="meta">No children added yet. Use “Add Child” from the menu.</div>';
     ids.forEach(id => {
-      const k = kids[id], fees = k.fees || {}; let rows = "", tot = 0;
-      Object.keys(fees).sort().forEach(m => {
-        const f = fees[m], rem = (f.due || 0) - (f.paid || 0); tot += rem;
-        rows += `<tr><td>${m}</td><td>₹${f.due || 0}</td><td>₹${f.paid || 0}</td><td style="color:${rem > 0 ? "#d92d20" : "#12a150"}">₹${rem}</td></tr>`;
-      });
-      const d = document.createElement("div"); d.className = "busitem"; d.style.cursor = "default";
-      d.innerHTML = `<b>${esc(k.name)} <span>${stat[k.status] || ""}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · ${esc(k.stop)}</div>` +
-        (rows ? `<table style="width:100%;font-size:.85rem;margin-top:6px"><tr><th align="left">महीना</th><th align="left">फीस</th><th align="left">जमा</th><th align="left">बाकी</th></tr>${rows}<tr><td colspan="3"><b>कुल बाकी</b></td><td><b>₹${tot}</b></td></tr></table>` : "");
+      const k = kids[id], d = document.createElement("div"); d.className = "busitem"; d.style.cursor = "default";
+      let fee = "";
+      if (k.status === "approved") {
+        const m = curMonth(), paid = !!(k.pay && k.pay[m]), pend = owed(k);
+        fee = `<div class="feebox"><div><small>Platform fee</small><b>₹${feeRate}/month</b></div><div><small>${monthLabel(m)}</small><b class="${paid ? "okc" : "badc"}">${paid ? "Paid ✔" : "Not paid"}</b></div><div><small>Outstanding</small><b class="${pend.length ? "badc" : "okc"}">₹${pend.length * feeRate}</b></div></div>` + (pend.length ? `<div class="meta" style="margin-top:8px">Pending months: ${pend.map(monthLabel).join(", ")}</div>` : "");
+      }
+      d.innerHTML = `<b>${esc(k.name)} <span class="${k.status === "approved" ? "ok" : k.status === "rejected" ? "bad" : ""}">${stat[k.status] || ""}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · Pickup: ${esc(k.stop)}</div>` + fee;
       box.appendChild(d);
     });
     watchBuses();
@@ -385,10 +438,10 @@ function startParent(user, prof){
   $("kAdd").onclick = async () => {
     const name = $("kName").value.trim(), cls = $("kCls").value.trim(), stop = $("kStop").value.trim();
     const busId = $("kBus").value.trim().toUpperCase().replace(/[.#$\[\]\/\s]/g, "");
-    if (!name || !busId) { $("kMsg").textContent = "बच्चे का नाम और Bus ID भरें।"; return; }
+    if (!name || !busId) { $("kMsg").textContent = "Enter the child’s name and Bus ID."; return; }
     try {
       await set(push(ref(db, "children")), { pk: me, parentName: user.displayName || "", parentEmail: user.email, name, cls, busId, stop, status: "pending", createdAt: Date.now() });
-      $("kMsg").textContent = "रिक्वेस्ट भेज दी गई ✔ — स्कूल के अप्रूवल का इंतज़ार करें।";
+      $("kMsg").textContent = "Request sent ✔ — please wait for the school’s approval.";
       ["kName", "kCls", "kBus", "kStop"].forEach(i => $(i).value = "");
     } catch (e) { $("kMsg").textContent = "Error: " + e.code; }
   };
@@ -404,7 +457,7 @@ function startManager(user){
 
   function renderBuses(){
     const ids = Object.keys(buses); let live = 0;
-    $("busList").innerHTML = ids.length ? "" : '<div class="meta">अभी कोई बस डेटा नहीं है।</div>';
+    $("busList").innerHTML = ids.length ? "" : '<div class="meta">No bus data yet.</div>';
     ids.sort().forEach(id => {
       const b = buses[id], on = isLive(b); if (on) live++;
       const div = document.createElement("div"); div.className = "busitem";
@@ -428,7 +481,7 @@ function startManager(user){
   });
   setInterval(renderBuses, 5000);
 
-  // ---- स्कूल की लोकेशन ----
+
   const sl = schoolLayer(map);
   watchSchool(() => {
     sl();
@@ -439,77 +492,82 @@ function startManager(user){
     e => $("sMsg").textContent = "GPS Error: " + e.message, { enableHighAccuracy: true });
   $("sSave").onclick = async () => {
     const lat = parseFloat($("sLat").value), lng = parseFloat($("sLng").value);
-    if (isNaN(lat) || isNaN(lng)) { $("sMsg").textContent = "Latitude और Longitude भरें।"; return; }
-    try { await set(ref(db, "settings/school"), { name: $("sName").value.trim() || "School", lat, lng }); $("sMsg").textContent = "सेव हो गया ✔"; }
+    if (isNaN(lat) || isNaN(lng)) { $("sMsg").textContent = "Latitude and Longitude are required."; return; }
+    try { await set(ref(db, "settings/school"), { name: $("sName").value.trim() || "School", lat, lng }); $("sMsg").textContent = "Saved ✔"; }
     catch (e) { $("sMsg").textContent = "Error: " + e.code; }
   };
 
-  // ---- बच्चों के अप्रूवल + फीस ----
+
   let kids = {};
-  $("fMonth").value = new Date().toISOString().slice(0, 7);
-  function drawFees(){
-    const k = kids[$("fKid").value], f = (k && k.fees) || {};
-    $("fList").innerHTML = Object.keys(f).sort().map(m => `<div class="useritem"><span>${m}: फीस ₹${f[m].due} · जमा ₹${f[m].paid} · बाकी <b>₹${f[m].due - f[m].paid}</b></span></div>`).join("") || '<div class="meta">कोई फीस एंट्री नहीं।</div>';
+  $("fMonth").value = curMonth();
+  function renderFees(){
+    const m = $("fMonth").value || curMonth(), f = $("fFilter").value;
+    const rows = Object.entries(kids).filter(([, k]) => k.status === "approved").map(([id, k]) => ({ id, k, paid: !!(k.pay && k.pay[m]), pend: owed(k) }));
+    const collected = rows.reduce((a, r) => a + (r.paid ? (r.k.pay[m].amount || 0) : 0), 0);
+    const outstanding = rows.reduce((a, r) => a + r.pend.length * feeRate, 0);
+    $("feeSum").innerHTML = `<div class="stat"><span>₹${collected}</span><small>Collected in ${monthLabel(m)}</small></div><div class="stat"><span>${rows.filter(r => r.paid).length}/${rows.length}</span><small>Students paid</small></div><div class="stat warn"><span>₹${outstanding}</span><small>Total outstanding</small></div>`;
+    $("stDue").textContent = "₹" + outstanding;
+    $("fList").innerHTML = "";
+    rows.filter(r => f === "all" || (f === "paid") === r.paid).forEach(({ id, k, paid, pend }) => {
+      const d = document.createElement("div"); d.className = "busitem"; d.style.cursor = "default";
+      d.innerHTML = `<b>${esc(k.name)} <span class="${paid ? "ok" : "bad"}">${paid ? "Paid ✔" : "Not paid"}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · ${esc(k.parentName)}<br>${pend.length ? "Pending: " + pend.map(monthLabel).join(", ") + " — ₹" + pend.length * feeRate : "No dues"}</div>`;
+      const b = document.createElement("button"); b.className = paid ? "btn-ghost" : "btn-main"; b.style.cssText = "margin-top:10px;padding:9px 16px";
+      b.textContent = paid ? "Undo payment" : "Mark " + monthLabel(m) + " as paid";
+      b.onclick = () => set(ref(db, `children/${id}/pay/${m}`), paid ? null : { amount: feeRate, at: Date.now() });
+      d.appendChild(b); $("fList").appendChild(d);
+    });
+    if (!$("fList").children.length) $("fList").innerHTML = '<div class="meta">No students in this view.</div>';
   }
   onValue(ref(db, "children"), snap => {
     kids = snap.val() || {};
-    const sel = $("fKid").value; $("pendList").innerHTML = ""; $("fKid").innerHTML = "";
+    $("pendList").innerHTML = "";
     Object.entries(kids).forEach(([id, k]) => {
-      if (k.status === "pending") {
-        const d = document.createElement("div"); d.className = "useritem";
-        d.innerHTML = `<div><b>${esc(k.name)}</b> (Class ${esc(k.cls)})<br><span class="meta">Bus ${esc(k.busId)} · ${esc(k.stop)}<br>Parent: ${esc(k.parentName)} ${esc(k.parentEmail)}</span></div>`;
-        const ok = document.createElement("button"); ok.textContent = "Approve"; ok.style.cssText = "background:#d1fadf;color:#12a150";
-        ok.onclick = () => update(ref(db), { [`children/${id}/status`]: "approved", [`approved/${k.busId}/${id}`]: { name: k.name, pk: k.pk, stop: k.stop || "" } });
-        const no = document.createElement("button"); no.textContent = "Reject";
-        no.onclick = () => update(ref(db, "children/" + id), { status: "rejected" });
-        d.append(ok, no); $("pendList").appendChild(d);
-      } else if (k.status === "approved") {
-        const o = document.createElement("option"); o.value = id; o.textContent = `${k.name} (Bus ${k.busId})`; $("fKid").appendChild(o);
-      }
+      if (k.status !== "pending") return;
+      const d = document.createElement("div"); d.className = "useritem";
+      d.innerHTML = `<div><b>${esc(k.name)}</b> (Class ${esc(k.cls)})<br><span class="meta">Bus ${esc(k.busId)} · ${esc(k.stop)}<br>Parent: ${esc(k.parentName)} ${esc(k.parentEmail)}</span></div>`;
+      const ok = document.createElement("button"); ok.textContent = "Approve"; ok.style.cssText = "background:#d1fadf;color:#0f7a43";
+      ok.onclick = () => update(ref(db), { [`children/${id}/status`]: "approved", [`approved/${k.busId}/${id}`]: { name: k.name, pk: k.pk, stop: k.stop || "" } });
+      const no = document.createElement("button"); no.textContent = "Reject";
+      no.onclick = () => update(ref(db, "children/" + id), { status: "rejected" });
+      d.append(ok, no); $("pendList").appendChild(d);
     });
-    if (sel) $("fKid").value = sel;
-    if (!$("pendList").children.length) $("pendList").innerHTML = '<div class="meta">कोई नई रिक्वेस्ट नहीं।</div>';
+    if (!$("pendList").children.length) $("pendList").innerHTML = '<div class="meta">No new requests.</div>';
     const ap = Object.values(kids).filter(k => k.status === "approved");
-    let due = 0, paid = 0;
-    ap.forEach(k => Object.values(k.fees || {}).forEach(f => { due += f.due || 0; paid += f.paid || 0; }));
-    $("feeSum").innerHTML = `<span>कुल फीस: <b>₹${due}</b></span><span>जमा: <b style="color:#12a150">₹${paid}</b></span><span>बाकी: <b style="color:#d92d20">₹${due - paid}</b></span>`;
     $("stReq").textContent = Object.values(kids).filter(k => k.status === "pending").length;
-    $("stKids").textContent = ap.length; $("stDue").textContent = "₹" + (due - paid);
-    $("stuList").innerHTML = ap.map(k => {
-      const r = Object.values(k.fees || {}).reduce((a, f) => a + (f.due || 0) - (f.paid || 0), 0);
-      return `<div class="busitem" style="cursor:default"><b>${esc(k.name)} <span>बाकी ₹${r}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · पिकअप: ${esc(k.stop)}<br>Parent: ${esc(k.parentName)} ${esc(k.parentEmail)}</div></div>`;
-    }).join("") || '<div class="meta">कोई अप्रूव्ड बच्चा नहीं।</div>';
-    drawFees();
+    $("stKids").textContent = ap.length;
+    $("stuList").innerHTML = ap.map(k => { const n = owed(k).length;
+      return `<div class="busitem" style="cursor:default"><b>${esc(k.name)} <span class="${n ? "bad" : "ok"}">${n ? n + " month(s) due" : "Up to date"}</span></b><div class="meta">Class ${esc(k.cls)} · Bus ${esc(k.busId)} · Pickup: ${esc(k.stop)}<br>Parent: ${esc(k.parentName)} ${esc(k.parentEmail)}</div></div>`; }).join("") || '<div class="meta">No approved students yet.</div>';
+    renderFees();
   });
-  $("fKid").onchange = drawFees;
-  $("fSave").onclick = async () => {
-    const id = $("fKid").value, m = $("fMonth").value, due = Number($("fDue").value), paid = Number($("fPaid").value || 0);
-    if (!id || !m || !due) { $("fMsg").textContent = "बच्चा, महीना और फीस भरें।"; return; }
-    try { await set(ref(db, `children/${id}/fees/${m}`), { due, paid }); $("fMsg").textContent = "सेव हो गया ✔"; }
-    catch (e) { $("fMsg").textContent = "Error: " + e.code; }
+  watchSchool(() => { if (!$("feeRate").value && feeRate) $("feeRate").value = feeRate; renderFees(); });
+  $("fMonth").onchange = $("fFilter").onchange = renderFees;
+  $("rateSave").onclick = async () => {
+    const v = $("feeRate").value;
+    if (v === "" || Number(v) < 0) { $("rateMsg").textContent = "Enter a valid amount."; return; }
+    try { await set(ref(db, "settings/fee"), Number(v)); $("rateMsg").textContent = "Saved ✔"; } catch (e) { $("rateMsg").textContent = "Error: " + e.code; }
   };
 
-  // ---- ड्राइवर मैनेजमेंट ----
+
   $("uAdd").onclick = async () => {
     const name = $("uName").value.trim(), email = $("uEmail").value.trim().toLowerCase();
     const role = $("uRole").value, busId = $("uBus").value.trim().toUpperCase().replace(/[.#$\[\]\/\s]/g, "");
-    if (!name || !email || !busId) { $("uMsg").textContent = "नाम, ईमेल और Bus ID तीनों भरें।"; return; }
+    if (!name || !email || !busId) { $("uMsg").textContent = "Name, email and Bus ID are all required."; return; }
     try {
       await set(ref(db, "roles/" + emailKey(email)), { name, email, role, busId });
-      $("uMsg").textContent = "सेव हो गया ✔";
+      $("uMsg").textContent = "Saved ✔";
       $("uName").value = $("uEmail").value = $("uBus").value = "";
     } catch (e) { $("uMsg").textContent = "Error: " + e.code; }
   };
 
   onValue(ref(db, "roles"), snap => {
     const r = snap.val() || {};
-    $("userList").innerHTML = Object.keys(r).length ? "" : '<div class="meta">अभी कोई यूज़र नहीं।</div>';
+    $("userList").innerHTML = Object.keys(r).length ? "" : '<div class="meta">No drivers yet.</div>';
     Object.keys(r).forEach(k => {
       const u = r[k], div = document.createElement("div");
       div.className = "useritem";
       div.innerHTML = `<div><b>${esc(u.name)}</b> (${esc(u.role)} · ${esc(u.busId)})<br><span class="meta">${esc(u.email)}</span></div>`;
-      const del = document.createElement("button"); del.textContent = "हटाएँ";
-      del.onclick = () => confirm(u.name + " को हटाएँ?") && remove(ref(db, "roles/" + k));
+      const del = document.createElement("button"); del.textContent = "Remove";
+      del.onclick = () => confirm(u.name + " — remove this driver?") && remove(ref(db, "roles/" + k));
       div.appendChild(del);
       $("userList").appendChild(div);
     });

@@ -288,18 +288,18 @@ const flatLb = v => Object.entries(v || {}).flatMap(([, b]) => Object.entries(b)
 function lbEntry(name, bus, m, cls){
   const R = rewards(m), pre = curMonth(); let mp = 0, ma = 0;
   Object.entries(m).forEach(([d, v]) => { if (!isHoliday(d) && d.startsWith(pre)) v === 1 ? mp++ : ma++; });
-  return { name, cls: cls || "", bus, streak: R.streak, present: R.present, absent: R.absent, points: R.points, mp, ma };
+  return { name, ...(cls ? { cls } : {}), bus, streak: R.streak, present: R.present, absent: R.absent, points: R.points, mp, ma };
 }
 const boardTab = {};
 function paintBoard(el, es, mine){          // most days on top · equal days share a rank · phone numbers only on admin entries (e.adm)
   el._es = es; el._mine = mine || [];
   const t = boardTab[el.id] || "m", key = { m: "mp", a: "present", x: "ma" }[t], unit = t === "x" ? "absent" : "days", bad = t === "x";
-  const list = es.filter(e => e[key] > 0).sort((a, b) => b[key] - a[key] || a.name.localeCompare(b.name));
+  const list = es.filter(e => t !== "x" || e[key] > 0).sort((a, b) => b[key] - a[key] || a.name.localeCompare(b.name));
   let prev, rank = 0; list.forEach((e, i) => { if (e[key] !== prev) { rank = i + 1; prev = e[key]; } e.rank = rank; });
   const mineOf = e => el._mine.includes(e.id);
   const av = e => `<i class="av" style="background:hsl(${[...e.name].reduce((a, c) => a + c.charCodeAt(0), 0) * 47 % 360} 55% 42%)">${esc(e.name[0] || "?")}</i>`;
-  const sub = e => `Class ${esc(e.cls || "—")} · Bus ${esc(e.bus)}` + (e.adm ? `<br>👤 ${esc(e.parent || "—")} · <a href="tel:${esc(e.phone || "")}">📞 ${esc(e.phone || "—")}</a>` : "");
-  const top = list.filter(e => e.rank <= 3).slice(0, 3), rest = list.filter(e => !top.includes(e)), slot = [top[1], top[0], top[2]];
+  const sub = e => `Class ${esc(e.cls || "—")}` + (e.adm ? ` · Bus ${esc(e.bus)}` : "") + (e.adm ? `<br>👤 ${esc(e.parent || "—")} · <a href="tel:${esc(e.phone || "")}">📞 ${esc(e.phone || "—")}</a>` : "");
+  const top = list.filter(e => e.rank <= 3 && e[key] > 0).slice(0, 3), rest = list.filter(e => !top.includes(e)), slot = [top[1], top[0], top[2]];
   let h = `<div class="tabs">${[["m", "This month"], ["a", "All time"], ["x", "Most absent"]].map(([k, l]) => `<button data-tab="${k}" class="${k === t ? "on" : ""}">${l}</button>`).join("")}</div>`;
   h += list.filter(mineOf).map(e => `<div class="mine">🏅 ${esc(e.name)} is <b>#${e.rank}</b> of ${list.length} · ${e[key]} ${unit}</div>`).join("");
   h += list.length ? `<div class="pod">${slot.map((e, i) => e ? `<div class="pd p${e.rank}${bad ? " bad" : ""}${i === 1 ? " c" : ""}"><span class="rk">${bad ? "#" + e.rank : ["🥇", "🥈", "🥉"][e.rank - 1]}</span>${av(e)}<b>${esc(e.name)}</b><small>Class ${esc(e.cls || "—")}</small><em>${e[key]} ${unit}</em>${e.adm ? `<small><a href="tel:${esc(e.phone || "")}">📞 ${esc(e.phone || "—")}</a></small>` : ""}</div>` : "<div></div>").join("")}</div>` : '<div class="meta" style="padding:14px 0">Nothing here yet.</div>';
@@ -473,7 +473,7 @@ function startDriver(user, role){
     else if (am) set(ref(db, `presence/${busId}/${id}/${today}`), 1);          // reached school = present for the day
   }
   const lbSent = {};
-  function publishLb(){ Object.entries(kids).forEach(([id, k]) => { const e = lbEntry(k.name, busId, presB[id] || {}, k.cls), j = JSON.stringify(e); if (lbSent[id] !== j) { lbSent[id] = j; set(ref(db, `leaderboard/${busId}/${id}`), e); } }); }
+  function publishLb(){ Object.entries(kids).forEach(([id, k]) => { const e = lbEntry(k.name, busId, presB[id] || {}, k.cls), j = JSON.stringify(e); if (lbSent[id] !== j) { lbSent[id] = j; update(ref(db, `leaderboard/${busId}/${id}`), e); } }); }
   function fillRounds(){
     const list = [...new Set([1, ...Object.keys(rounds).map(Number), ...Object.values(kids).map(k => k.round || 1)])].sort(), sig = list.join() + JSON.stringify(rounds);
     if (sig === roundSig) return; roundSig = sig;
@@ -584,7 +584,7 @@ function startDriver(user, role){
       const label = state === 2 ? "Absent today" : state === 3 ? (am ? "At school ✓" : "Home ✓") : state === 1 ? (am ? "On board → school" : near ? "Nearby — drop here" : "On board → home") : am ? (near ? "Nearby — pick up here" : "Waiting for pickup") : "Waiting at school";
       const d = document.createElement("div"); d.className = "busitem"; d.style.cursor = "default";
       d.innerHTML = `<b>${num ? "#" + n + " " : ""}${esc(k.name)} <span class="${near ? "near" : state === 2 ? "bad" : state === 3 ? "ok" : ""}">${label}</span></b><div class="meta">${esc(k.stop)}${dist != null ? " · " + (dist < 1 ? Math.round(dist * 1000) + " m" : dist.toFixed(1) + " km") + " away" : ""}</div>`;
-      const mk = (t, css, fn) => { const b = document.createElement("button"); b.textContent = t; b.style.cssText = css + ";padding:9px 16px;margin:10px 8px 0 0"; b.onclick = fn; d.appendChild(b); };
+      const mk = (t, css, fn) => { const b = document.createElement("button"); b.textContent = t; b.style.cssText = css + ";padding:6px 14px;margin:8px 8px 0 0;font-size:.88rem"; b.onclick = fn; d.appendChild(b); };
       if (state === 1) mk(am ? "Dropped at school" : "Dropped at home", "background:#d92d20;color:#fff", () => toggle(id, k, true));
       else if (state === 0) { mk("Mark boarded", "background:var(--gold);color:#140e00", () => toggle(id, k, false)); if (am) mk("Not here", "background:rgba(255,255,255,.08);color:#f2f3f7", () => set(ref(db, `presence/${busId}/${id}/${today}`), 0)); }
       $("drvKids").appendChild(d);
@@ -872,7 +872,7 @@ function startManager(user){
       const rs = document.createElement("select"); rs.style.cssText = "width:auto;padding:8px 10px;font-size:.85rem";
       [1, 2, 3, 4].forEach(r => rs.add(new Option("Round " + r, r, false, (k.round || 1) === r)));
       const ok = document.createElement("button"); ok.textContent = "Approve"; ok.style.cssText = "background:#d1fadf;color:#0f7a43";
-      ok.onclick = () => update(ref(db), { [`children/${id}/status`]: "approved", [`members/${k.pk}`]: true, [`approved/${k.busId}/${id}`]: { name: k.name, pk: k.pk, stop: k.stop || "", lat: k.lat ?? null, lng: k.lng ?? null, round: +rs.value, cls: k.cls || "" }, [`children/${id}/round`]: +rs.value });
+      ok.onclick = () => update(ref(db), { [`children/${id}/status`]: "approved", [`members/${k.pk}`]: true, [`approved/${k.busId}/${id}`]: { name: k.name, pk: k.pk, stop: k.stop || "", cls: k.cls || "", lat: k.lat ?? null, lng: k.lng ?? null, round: +rs.value, cls: k.cls || "" }, [`children/${id}/round`]: +rs.value });
       const no = document.createElement("button"); no.textContent = "Reject";
       no.onclick = () => update(ref(db, "children/" + id), { status: "rejected" });
       d.append(rs, ok, no); $("pendList").appendChild(d);
